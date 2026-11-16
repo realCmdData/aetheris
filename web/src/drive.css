@@ -1,0 +1,61 @@
+/* The web app's layer over the shared design system (app.css is also the Windows app window's base, which keeps
+   its Quiet Sculpture plinth). Drive-like chrome in Material 3 shapes: the same palette, Lexend, springs and
+   press feedback; titles move from Canela to Lexend, as Drive sets its in its sans. */
+:root {
+  --type-large-title: 400 1.375rem/1.3 var(--font);
+  --type-title: 400 1.125rem/1.35 var(--font);
+  --track-display: 0;
+}
+body { background: var(--frame); }
+
+/* Buttons: full pills. Filled for the main action, outlined for the rest, text buttons for quiet ones. */
+.btn { min-height: 2.5rem; padding: 0 1.5rem; border-radius: 999px; font: 500 .875rem/1 var(--font); letter-spacing: .01em; box-shadow: none; }
+.btn:has(> svg:first-child) { padding-left: 1rem; }
+.btn:hover:not(:disabled) { box-shadow: var(--shadow-1); }
+.btn.plain { background: transparent; color: var(--accent-text); border: 1px solid var(--outline); box-shadow: none; }
+.btn.plain:hover:not(:disabled), .btn.quiet:hover:not(:disabled), .btn.danger:hover:not(:disabled) { box-shadow: none; }
+.btn.plain:hover:not(:disabled) { background: var(--hover); }
+.btn.quiet, .btn.danger { padding: 0 .85rem; }
+
+.icon-btn { width: 2.5rem; height: 2.5rem; }
+.icon-btn[aria-pressed='true'] { background: var(--container); color: var(--text); }
+.circle-btn { width: 2.5rem; height: 2.5rem; border: 0; background: var(--surface-2); box-shadow: none; }
+.circle-btn:hover { background: var(--surface-3); }
+
+/* Menus: solid (glass let the rows beneath read through the labels), full-width rows with a state layer */
+.menu, .menu.glass { border-radius: 12px; padding: 6px 0; gap: 0; min-width: 13rem; background: var(--surface); border: 0;
+  backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: var(--shadow-2), 0 0 0 1px var(--separator); }
+.menu button { height: 2.5rem; padding: 0 1rem; gap: .85rem; border-radius: 0; font: 400 .875rem/1 var(--font); }
+.menu button svg { opacity: 1; color: var(--text-2); }
+.menu .danger svg { color: var(--error); }
+.menu hr { width: 100%; margin: 6px 0; border: 0; border-top: 1px solid var(--separator); }
+.menu [aria-checked='true'] { background: var(--container); }
+
+/* Tables (My files as a list, Recent, Trash): header row, then 48 px rows on hairlines */
+.thead, .trow { display: flex; align-items: center; gap: 1rem; min-height: 3rem; padding: 0 .5rem 0 1rem; border-bottom: 1px solid var(--separator); }
+.thead { position: sticky; top: 0; z-index: 2; background: var(--surface); font: 500 .8125rem/1 var(--font); color: var(--text-2); }
+.trow { transition: background-color 120ms ease-out; }
+.trow:hover { background: var(--hover); }
+.c-name { flex: 1; min-width: 0; display: flex; align-items: center; gap: 1rem; }
+.c-where { width: 13rem; display: flex; align-items: center; gap: .5rem; min-width: 0; }
+.c-date { width: 10rem; }
+.c-size { width: 6rem; }
+.c-act { width: 2.5rem; flex: none; display: flex; justify-content: flex-end; }
+.c-where, .c-date, .c-size { flex: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.thead :is(.c-where, .c-date, .c-size) { overflow: visible; } /* the sort buttons' hover shape reaches past the column's edge */
+.trow .c-date, .trow .c-size, .trow .c-where { font: 300 .8125rem/1.3 var(--font); color: var(--text-3); }
+.ico { width: 1.5rem; height: 1.5rem; flex: none; display: grid; place-items: center; }
+.nm { font: var(--type-name); letter-spacing: var(--track-name); color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+button.nm { border: 0; background: none; padding: 0; text-align: left; }
+button.nm:hover { text-decoration: underline; text-underline-offset: 3px; }
+a.c-where { color: var(--text-3); text-decoration: none; border-radius: 4px; }
+a.c-where:hover { color: var(--text); }
+a.c-where svg { flex: none; color: var(--tone-folder); }
+
+.page-head { min-height: 4rem; margin: 0; padding: .5rem 0 0; }
+
+@media (max-width: 760px) {
+  .large-title { font-size: 1.25rem; }
+  .c-where, .c-date { display: none; }
+  .page-head { min-height: 3.5rem; }
+}

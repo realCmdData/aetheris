@@ -1,0 +1,2736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aetheris</title>
+<style>
+  /* ==========================================================================
+     LOCAL TYPOGRAPHY — Commercial Type Canela Deck + Lexend
+     unicode-range on Canela ensures any extended glyph falls back seamlessly
+     to Lexend without ever rendering a missing-glyph box.
+     ========================================================================== */
+  @font-face {
+    font-family: 'Aetheris Display';
+    src: local('CanelaDeckTrial-Light'), local('Canela Deck Light Trial'), local('CanelaLight'), local('CanelaTrial-Light');
+    font-weight: 300;
+    font-style: normal;
+    unicode-range: U+0020-0021, U+0026-002E, U+0030-003B, U+003F, U+0041-005A, U+0061-007A, U+2013-2014, U+2018-201D;
+  }
+  @font-face {
+    font-family: 'Aetheris Display';
+    src: local('CanelaDeckTrial-LightItalic'), local('Canela Deck Light Italic Trial');
+    font-weight: 300;
+    font-style: italic;
+    unicode-range: U+0020-0021, U+0026-002E, U+0030-003B, U+003F, U+0041-005A, U+0061-007A, U+2013-2014, U+2018-201D;
+  }
+  @font-face {
+    font-family: 'Aetheris Display';
+    src: local('CanelaDeckTrial-Regular'), local('Canela Deck Regular Trial'), local('CanelaTrial-Regular');
+    font-weight: 400;
+    font-style: normal;
+    unicode-range: U+0020-0021, U+0026-002E, U+0030-003B, U+003F, U+0041-005A, U+0061-007A, U+2013-2014, U+2018-201D;
+  }
+  @font-face {
+    font-family: 'Aetheris Display';
+    src: local('CanelaDeckTrial-Medium'), local('Canela Deck Medium Trial');
+    font-weight: 500;
+    font-style: normal;
+    unicode-range: U+0020-0021, U+0026-002E, U+0030-003B, U+003F, U+0041-005A, U+0061-007A, U+2013-2014, U+2018-201D;
+  }
+
+  @font-face {
+    font-family: 'Aetheris Sans';
+    src: local('Lexend-ExtraLight'), local('Lexend ExtraLight');
+    font-weight: 200;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Aetheris Sans';
+    src: local('Lexend-Light'), local('Lexend Light');
+    font-weight: 300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Aetheris Sans';
+    src: local('Lexend-Regular'), local('Lexend Regular'), local('Lexend');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Aetheris Sans';
+    src: local('Lexend-Medium'), local('Lexend Medium');
+    font-weight: 500;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Aetheris Sans';
+    src: local('Lexend-SemiBold'), local('Lexend SemiBold');
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* ==========================================================================
+     DESIGN TOKENS — Scoped to .ae (Porcelain, Brushed Silver & Warm Coral)
+     ========================================================================== */
+  .ae {
+    --coral: #E54B4B;
+    --coral-deep: #C93A3A;
+    --apricot: #FFA987;
+    --seashell: #F7EBE8;
+    --graphite: #444140;
+    --obsidian: #1E1E24;
+
+    /* Light Mode: Luminous Porcelain framed by Warm Seashell (from brand art) */
+    --bg-ambient: linear-gradient(180deg, #FAF1EE 0%, #F5E6E1 100%);
+    --bg-stage: linear-gradient(155deg, #FFFFFF 0%, #FCF9F7 58%, #F9F2EE 100%);
+    --bg-card: #FFFFFF;
+    --bg-card-subtle: rgba(247, 235, 232, 0.52);
+    --bg-hover: rgba(68, 65, 64, 0.045);
+    --bg-selected: rgba(229, 75, 75, 0.075);
+
+    --glass-fill: rgba(255, 253, 252, 0.74);
+    --glass-pill: rgba(255, 255, 255, 0.82);
+    --glass-border: rgba(255, 255, 255, 0.92);
+    --hairline: rgba(68, 65, 64, 0.085);
+    --hairline-strong: rgba(68, 65, 64, 0.15);
+
+    --ink: #1E1E24;
+    --ink-2: #444140;
+    --ink-3: #7A7270;
+    --ink-faint: #ABA29F;
+
+    --shadow-stage:
+      0 30px 70px -20px rgba(45, 34, 32, 0.09),
+      0 10px 26px -10px rgba(229, 75, 75, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    --shadow-object:
+      0 10px 24px -10px rgba(45, 34, 32, 0.09),
+      0 2px 6px rgba(45, 34, 32, 0.04);
+    --shadow-lifted:
+      0 24px 48px -12px rgba(30, 30, 36, 0.16),
+      0 8px 20px -6px rgba(229, 75, 75, 0.14);
+    --shadow-popover:
+      0 22px 54px -12px rgba(30, 30, 36, 0.18),
+      0 4px 14px rgba(30, 30, 36, 0.06);
+
+    --font-display: 'Aetheris Display', 'Aetheris Sans', 'Sitka Display', Georgia, serif;
+    --font-sans: 'Aetheris Sans', 'HarmonyOS Sans SC', system-ui, sans-serif;
+    --display-weight: 300;
+    --display-track: -0.015em;
+
+    --blur: 22px;
+
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-ambient);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: -0.011em;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 22px;
+    user-select: none;
+    overflow: hidden;
+    transition: background 0.35s ease, color 0.25s ease;
+  }
+
+  /* Pure Geometric Humanist Mode (Toggle via Aa icon) */
+  .ae[data-font="sans"] {
+    --font-display: 'Aetheris Sans', 'HarmonyOS Sans SC', system-ui, sans-serif;
+    --display-weight: 300;
+    --display-track: -0.032em;
+  }
+
+  /* Dark Mode: Obsidian Studio & Brushed Platinum */
+  .ae[data-theme="dark"] {
+    --bg-ambient: linear-gradient(180deg, #131317 0%, #17161B 100%);
+    --bg-stage: linear-gradient(155deg, #222229 0%, #1E1E24 62%, #1A1A20 100%);
+    --bg-card: #272730;
+    --bg-card-subtle: rgba(255, 255, 255, 0.035);
+    --bg-hover: rgba(247, 235, 232, 0.055);
+    --bg-selected: rgba(255, 169, 135, 0.12);
+
+    --glass-fill: rgba(34, 34, 42, 0.76);
+    --glass-pill: rgba(42, 42, 52, 0.86);
+    --glass-border: rgba(255, 255, 255, 0.11);
+    --hairline: rgba(247, 235, 232, 0.08);
+    --hairline-strong: rgba(247, 235, 232, 0.16);
+
+    --ink: #F7EBE8;
+    --ink-2: #C8BFBC;
+    --ink-3: #8E8684;
+    --ink-faint: #615B5B;
+
+    --shadow-stage:
+      0 32px 80px -16px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    --shadow-object:
+      0 12px 28px -10px rgba(0, 0, 0, 0.48),
+      0 2px 6px rgba(0, 0, 0, 0.28);
+    --shadow-lifted:
+      0 26px 56px -10px rgba(0, 0, 0, 0.65),
+      0 8px 22px -6px rgba(229, 75, 75, 0.22);
+    --shadow-popover:
+      0 26px 60px -10px rgba(0, 0, 0, 0.68),
+      0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Reduced Transparency Fallback */
+  .ae[data-opaque="true"] {
+    --blur: 0px;
+    --glass-fill: var(--bg-card);
+    --glass-pill: var(--bg-card);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .ae {
+      --blur: 0px;
+      --glass-fill: var(--bg-card);
+      --glass-pill: var(--bg-card);
+    }
+  }
+
+  /* Soft ambient daylight aura matching the uploaded artwork */
+  .ae::before {
+    content: '';
+    position: absolute;
+    width: 62vw;
+    height: 62vw;
+    top: -28vw;
+    left: 19vw;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 169, 135, 0.08) 45%, transparent 72%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ae[data-theme="dark"]::before {
+    background: radial-gradient(circle, rgba(229, 75, 75, 0.08) 0%, rgba(255, 169, 135, 0.04) 42%, transparent 70%);
+  }
+
+  /* ==========================================================================
+     FLOATING STUDIO CAPSULE (Minimal mode + icon-only environment controls)
+     ========================================================================== */
+  .studio-dock {
+    position: fixed;
+    top: 30px;
+    right: 38px;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--glass-fill);
+    backdrop-filter: blur(var(--blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 24px -6px rgba(30, 30, 36, 0.1), 0 0 0 1px var(--hairline);
+  }
+
+  .mode-tabs {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .mode-pill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 999px;
+    background: var(--bg-card);
+    box-shadow: 0 2px 8px rgba(30, 30, 36, 0.08), 0 0 0 1px var(--hairline);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .mode-btn {
+    position: relative;
+    z-index: 1;
+    border: 0;
+    background: transparent;
+    color: var(--ink-3);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    padding: 6px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.18s ease;
+  }
+  .mode-btn[aria-selected="true"] {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .dock-sep {
+    width: 1px;
+    height: 16px;
+    background: var(--hairline-strong);
+    margin: 0 3px;
+  }
+
+  .icon-toggle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+  }
+  .icon-toggle:hover {
+    background: var(--bg-hover);
+    color: var(--ink);
+  }
+  .icon-toggle:active {
+    transform: scale(0.92);
+  }
+  .icon-toggle[aria-pressed="true"] {
+    color: var(--coral);
+    background: var(--bg-selected);
+  }
+
+  /* ==========================================================================
+     MAIN STAGE — Framed Porcelain / Obsidian Sheet
+     ========================================================================== */
+  .stage-shell {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-height: 0;
+    border-radius: 26px;
+    background: var(--bg-stage);
+    box-shadow: var(--shadow-stage);
+    border: 1px solid var(--hairline);
+    display: flex;
+    overflow: hidden;
+  }
+
+  .view-panel {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+  .view-panel.is-active {
+    display: flex;
+  }
+
+  /* ==========================================================================
+     VIEW 1: DRIVE WORKSPACE (Quiet Sculpture)
+     ========================================================================== */
+  .drive-rail {
+    width: 184px;
+    flex-shrink: 0;
+    padding: 26px 18px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--hairline);
+  }
+
+  .rail-top {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+
+  .brand-emblem-btn {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 14px;
+    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  }
+  .brand-emblem-btn:hover {
+    transform: translateY(-1px) scale(1.03);
+  }
+  .brand-emblem-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Sculptural '+' Primary Action */
+  .plus-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    background: linear-gradient(140deg, #E54B4B 0%, #F37564 55%, #FFA987 100%);
+    color: #FFFFFF;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow:
+      0 10px 22px -6px rgba(229, 75, 75, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    transition: transform 0.14s ease, box-shadow 0.2s ease;
+  }
+  .plus-btn:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 14px 26px -6px rgba(229, 75, 75, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+  .plus-btn:active {
+    transform: scale(0.93);
+  }
+
+  .nav-stack {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .nav-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--bg-card);
+    box-shadow: 0 2px 10px rgba(30, 30, 36, 0.06), 0 0 0 1px var(--hairline);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .nav-btn {
+    position: relative;
+    z-index: 1;
+    height: 38px;
+    border: 0;
+    background: transparent;
+    border-radius: 11px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: var(--ink-3);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: color 0.16s ease;
+  }
+  .nav-btn:hover {
+    color: var(--ink);
+  }
+  .nav-btn[aria-current="page"] {
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .nav-btn svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.82;
+    flex-shrink: 0;
+  }
+  .nav-btn[aria-current="page"] svg {
+    opacity: 1;
+    color: var(--coral);
+  }
+
+  /* Quiet Storage Hairline */
+  .rail-meter {
+    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .meter-track {
+    height: 3px;
+    border-radius: 999px;
+    background: var(--hairline-strong);
+    overflow: hidden;
+  }
+  .meter-fill {
+    width: 25.4%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--coral), var(--apricot));
+  }
+  .meter-caption {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--ink-3);
+    letter-spacing: 0;
+  }
+
+  /* Main Canvas */
+  .drive-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 38px 24px;
+    position: relative;
+  }
+
+  .canvas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 52px;
+    margin-bottom: 26px;
+    padding-right: 268px; /* Breathing room for top-right studio capsule */
+  }
+
+  .crumbs {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+  }
+  .crumb-root {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-track);
+    font-size: 2.35rem;
+    line-height: 1.05;
+    color: var(--ink);
+    cursor: pointer;
+    transition: opacity 0.16s ease;
+  }
+  .crumb-root.is-parent {
+    color: var(--ink-faint);
+    font-size: 1.75rem;
+  }
+  .crumb-root.is-parent:hover {
+    color: var(--ink-2);
+  }
+  .crumb-sep {
+    color: var(--ink-faint);
+    display: inline-flex;
+    align-items: center;
+    transform: translateY(2px);
+  }
+  .crumb-current {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-track);
+    font-size: 2.35rem;
+    line-height: 1.05;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Whisper-quiet icon toolbar */
+  .canvas-tools {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .search-pill {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    width: 36px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid transparent;
+    overflow: hidden;
+    transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease, border-color 0.2s ease;
+  }
+  .search-pill.is-open {
+    width: 210px;
+    background: var(--bg-card-subtle);
+    border-color: var(--hairline-strong);
+    padding-right: 8px;
+  }
+  .search-trigger {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  .search-pill:not(.is-open) .search-trigger:hover {
+    background: var(--bg-hover);
+    color: var(--ink);
+  }
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 300;
+    padding: 0 4px;
+  }
+  .search-clear {
+    border: 0;
+    background: transparent;
+    color: var(--ink-3);
+    cursor: pointer;
+    padding: 2px;
+    display: none;
+  }
+  .search-pill.has-value .search-clear {
+    display: grid;
+    place-items: center;
+  }
+
+  .tool-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+  }
+  .tool-circle:hover {
+    background: var(--bg-hover);
+    color: var(--ink);
+  }
+  .tool-circle:active {
+    transform: scale(0.92);
+  }
+  .tool-circle[aria-pressed="true"] {
+    background: var(--bg-selected);
+    color: var(--coral);
+  }
+
+  /* Scrollable Object Stage */
+  .object-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 6px 4px 36px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hairline-strong) transparent;
+  }
+
+  /* GALLERY GRID — Sculptural objects & framed prints, name only */
+  .object-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+    gap: 28px 22px;
+  }
+
+  .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.18s ease;
+    touch-action: none;
+  }
+  .tile:hover {
+    background: var(--bg-hover);
+  }
+  .tile.is-selected {
+    background: var(--bg-selected);
+  }
+  .tile.is-drop-target {
+    background: rgba(229, 75, 75, 0.13);
+    box-shadow: inset 0 0 0 1.5px var(--coral);
+  }
+
+  .tile-stage {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    position: relative;
+    transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .tile:hover .tile-stage {
+    transform: translateY(-3px);
+  }
+  .tile:active .tile-stage {
+    transform: scale(0.96);
+  }
+
+  /* Framed art print look for visual media */
+  .art-print {
+    width: 90%;
+    height: 90%;
+    border-radius: 12px;
+    padding: 5px;
+    background: var(--bg-card);
+    box-shadow: var(--shadow-object), 0 0 0 1px var(--hairline);
+    overflow: hidden;
+  }
+  .art-print svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 8px;
+  }
+
+  /* Paper sheet miniature for documents */
+  .paper-sheet {
+    width: 66%;
+    height: 92%;
+    border-radius: 10px;
+    background: var(--bg-card);
+    box-shadow: var(--shadow-object), 0 0 0 1px var(--hairline);
+    overflow: hidden;
+    position: relative;
+  }
+  .paper-sheet svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .tile-caption {
+    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 4px;
+  }
+  .tile-name {
+    font-size: 0.84rem;
+    font-weight: 400;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  /* Offline Hydration Bead — Silent Coral Dot (no text badge) */
+  .pin-bead {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--coral);
+    box-shadow: 0 0 8px rgba(229, 75, 75, 0.55);
+    flex-shrink: 0;
+  }
+
+  /* WHISPER LIST VIEW — Zero column headers, zero index numbers */
+  .object-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 860px;
+  }
+  .list-row {
+    height: 52px;
+    padding: 0 16px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: background 0.14s ease;
+  }
+  .list-row:hover {
+    background: var(--bg-hover);
+  }
+  .list-row.is-selected {
+    background: var(--bg-selected);
+  }
+  .row-visual {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .row-visual svg {
+    width: 30px;
+    height: 30px;
+  }
+  .row-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row-size {
+    font-size: 0.78rem;
+    font-weight: 300;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .row-pin-btn {
+    width: 24px;
+    height: 24px;
+    border: 0;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  .row-pin-btn .ring {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.25px solid var(--ink-faint);
+    transition: all 0.2s ease;
+  }
+  .row-pin-btn[aria-pressed="true"] .ring {
+    background: var(--coral);
+    border-color: var(--coral);
+    box-shadow: 0 0 8px rgba(229, 75, 75, 0.5);
+  }
+  .row-pin-btn:hover .ring {
+    transform: scale(1.25);
+    border-color: var(--coral);
+  }
+
+  /* ==========================================================================
+     OPTIONAL INSPECTOR SHEET (Closed by default)
+     ========================================================================== */
+  .inspector {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    border-left: 1px solid transparent;
+    transition: width 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease, border-color 0.22s ease;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .inspector.is-open {
+    width: 276px;
+    opacity: 1;
+    border-left-color: var(--hairline);
+  }
+  .inspector-inner {
+    width: 276px;
+    padding: 88px 26px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+  .insp-preview {
+    width: 156px;
+    height: 124px;
+    display: grid;
+    place-items: center;
+  }
+  .insp-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-track);
+    font-size: 1.55rem;
+    line-height: 1.15;
+    text-align: center;
+    color: var(--ink);
+  }
+  .insp-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .insp-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--hairline-strong);
+    background: var(--bg-card);
+    color: var(--ink-2);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(30, 30, 36, 0.05);
+    transition: transform 0.14s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .insp-btn:hover {
+    color: var(--ink);
+    transform: translateY(-1px);
+  }
+  .insp-btn:active {
+    transform: scale(0.92);
+  }
+  .insp-btn.is-active {
+    color: var(--coral);
+    border-color: rgba(229, 75, 75, 0.35);
+    background: var(--bg-selected);
+  }
+
+  .insp-facts {
+    width: 100%;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .fact-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.79rem;
+    font-weight: 300;
+  }
+  .fact-line span:first-child {
+    color: var(--ink-3);
+  }
+  .fact-line span:last-child {
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .version-dots {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .v-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background: var(--hairline-strong);
+    cursor: pointer;
+    transition: transform 0.16s ease, background 0.16s ease;
+  }
+  .v-dot[aria-selected="true"] {
+    background: var(--coral);
+    transform: scale(1.25);
+  }
+
+  /* ==========================================================================
+     FLOATING DRAG CLONE & WORDLESS RING INDICATOR
+     ========================================================================== */
+  .drag-ghost {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 148px;
+    padding: 12px;
+    border-radius: 18px;
+    background: var(--glass-pill);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-lifted);
+    pointer-events: none;
+    z-index: 120;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sync-orb {
+    position: fixed;
+    right: 42px;
+    bottom: 36px;
+    z-index: 70;
+    height: 40px;
+    padding: 0 14px 0 10px;
+    border-radius: 999px;
+    background: var(--glass-pill);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-popover);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--ink);
+    opacity: 0;
+    transform: translateY(12px) scale(0.92);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sync-orb.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* ==========================================================================
+     POPOVERS & ORIGIN-ANCHORED QUICK LOOK
+     ========================================================================== */
+  .popover-menu {
+    position: fixed;
+    z-index: 100;
+    min-width: 168px;
+    padding: 6px;
+    border-radius: 16px;
+    background: var(--glass-pill);
+    backdrop-filter: blur(var(--blur)) saturate(170%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(170%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-popover), 0 0 0 1px var(--hairline);
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    transform-origin: top left;
+    animation: menuBloom 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .popover-menu.is-open {
+    display: flex;
+  }
+  @keyframes menuBloom {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .menu-item {
+    border: 0;
+    background: transparent;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.83rem;
+    font-weight: 400;
+    cursor: pointer;
+    text-align: left;
+  }
+  .menu-item:hover {
+    background: var(--bg-hover);
+  }
+  .menu-item.is-danger {
+    color: var(--coral);
+  }
+  .menu-item svg {
+    width: 15px;
+    height: 15px;
+    opacity: 0.8;
+  }
+
+  /* Quick Look Lightbox */
+  .ql-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(24, 22, 24, 0.28);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.24s ease;
+  }
+  .ql-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .ql-card {
+    position: fixed;
+    z-index: 115;
+    width: min(560px, 86vw);
+    height: min(460px, 76vh);
+    left: calc(50vw - min(280px, 43vw));
+    top: calc(50vh - min(230px, 38vh));
+    border-radius: 28px;
+    background: var(--bg-stage);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-lifted), 0 0 0 1px var(--hairline);
+    padding: 28px 32px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .ql-card.is-open {
+    pointer-events: auto;
+  }
+  .ql-stage {
+    flex: 1;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    perspective: 700px;
+  }
+  .ql-stage-art {
+    width: 260px;
+    height: 210px;
+    display: grid;
+    place-items: center;
+    transition: transform 0.12s ease-out;
+  }
+  .ql-footer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+  }
+  .ql-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-track);
+    font-size: 1.75rem;
+    color: var(--ink);
+  }
+  .ql-controls {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ==========================================================================
+     VIEW 2: WINDOWS COMPANION (Standalone Plinth — Zero Prose Essay)
+     ========================================================================== */
+  .companion-view {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .companion-window {
+    width: 318px;
+    border-radius: 26px;
+    background: var(--glass-fill);
+    backdrop-filter: blur(var(--blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-lifted), 0 0 0 1px var(--hairline);
+    padding: 34px 28px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .comp-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .comp-status {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-track);
+    font-size: 2.1rem;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+
+  .comp-line {
+    width: 100%;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--hairline);
+    overflow: hidden;
+    position: relative;
+  }
+  .comp-line-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--coral), var(--apricot));
+    transform-origin: left center;
+    transition: transform 0.4s ease, opacity 0.3s ease;
+  }
+  .companion-window[data-state="syncing"] .comp-line-fill {
+    width: 45%;
+    animation: slidePulse 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .companion-window[data-state="offline"] .comp-line-fill {
+    opacity: 0.22;
+    background: var(--ink-3);
+  }
+  @keyframes slidePulse {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(240%); }
+  }
+
+  .comp-open-btn {
+    width: 100%;
+    height: 42px;
+    border-radius: 13px;
+    border: 1px solid var(--hairline-strong);
+    background: var(--bg-card);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(30, 30, 36, 0.05);
+    transition: transform 0.14s ease, box-shadow 0.18s ease;
+  }
+  .comp-open-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(30, 30, 36, 0.08);
+  }
+  .comp-open-btn:active {
+    transform: scale(0.97);
+  }
+
+  .comp-switches {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 6px;
+  }
+  .switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.83rem;
+    font-weight: 300;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .switch {
+    width: 38px;
+    height: 22px;
+    border-radius: 999px;
+    border: 0;
+    padding: 2px;
+    background: var(--hairline-strong);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s ease;
+  }
+  .switch[aria-checked="true"] {
+    background: linear-gradient(135deg, var(--coral), var(--apricot));
+  }
+  .switch-knob {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .switch[aria-checked="true"] .switch-knob {
+    transform: translateX(16px);
+  }
+
+  .state-dots {
+    display: flex;
+    gap: 10px;
+  }
+  .state-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background: var(--hairline-strong);
+    cursor: pointer;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .state-dot[aria-selected="true"] {
+    background: var(--coral);
+    transform: scale(1.3);
+  }
+
+  /* ==========================================================================
+     VIEW 3: ATELIER (Pure Visual & Tactile Specimen — Zero Paragraphs)
+     ========================================================================== */
+  .atelier-view {
+    width: 100%;
+    height: 100%;
+    padding: 78px 44px 36px;
+    display: grid;
+    grid-template-rows: 1fr 1.15fr;
+    gap: 24px;
+    overflow-y: auto;
+  }
+
+  .swatch-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+  .ceramic-swatch {
+    border-radius: 20px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    box-shadow: var(--shadow-object);
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .ceramic-swatch:hover {
+    transform: translateY(-4px);
+  }
+  .ceramic-swatch:active {
+    transform: scale(0.97);
+  }
+  .swatch-hex {
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  .atelier-lower {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 24px;
+    min-height: 230px;
+  }
+
+  .specimen-card, .physics-dish {
+    border-radius: 24px;
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--hairline);
+    padding: 28px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .specimen-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .specimen-words {
+    display: flex;
+    align-items: baseline;
+    gap: 26px;
+    flex-wrap: wrap;
+  }
+  .spec-display {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-track);
+    font-size: clamp(2.6rem, 4.4vw, 3.8rem);
+    line-height: 1;
+    color: var(--ink);
+  }
+  .spec-italic {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(2.1rem, 3.4vw, 3rem);
+    color: var(--coral);
+  }
+  .spec-alphabet {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: 0.92rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+  }
+  .spec-pair-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline);
+    font-size: 0.78rem;
+    color: var(--ink-3);
+  }
+  .pair-toggle-btn {
+    border: 1px solid var(--hairline-strong);
+    background: var(--bg-card);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.76rem;
+    font-weight: 400;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  /* Interactive Apple Spring & Rubberband Dish */
+  .physics-dish {
+    display: grid;
+    place-items: center;
+    touch-action: none;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 169, 135, 0.08) 0%, transparent 65%),
+      var(--bg-card-subtle);
+  }
+  .well-markers {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 14%;
+    pointer-events: none;
+  }
+  .well-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--hairline-strong);
+  }
+  .spring-puck {
+    width: 78px;
+    height: 78px;
+    border-radius: 26px;
+    background: var(--glass-pill);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-lifted);
+    display: grid;
+    place-items: center;
+    cursor: grab;
+    z-index: 2;
+    will-change: transform;
+  }
+  .spring-puck:active {
+    cursor: grabbing;
+  }
+
+  @media (max-width: 860px) {
+    .drive-rail { width: 74px; padding: 22px 12px; align-items: center; }
+    .brand-row { flex-direction: column; gap: 16px; }
+    .nav-btn span, .rail-meter { display: none; }
+    .nav-btn { justify-content: center; padding: 0; width: 42px; }
+    .canvas-header { padding-right: 0; margin-top: 34px; }
+    .swatch-row { grid-template-columns: repeat(3, 1fr); }
+    .atelier-lower { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="ae" id="aeRoot" data-theme="light" data-font="editorial" data-opaque="false">
+
+  <!-- Shared SVG Definitions for Brushed Silver, Frosted Ribbon & Coral Glow -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
+    <defs>
+      <linearGradient id="aeHouseGrad" x1="15%" y1="15%" x2="88%" y2="88%">
+        <stop offset="0%" stop-color="#E54B4B" />
+        <stop offset="52%" stop-color="#F26E5B" />
+        <stop offset="100%" stop-color="#FFA987" />
+      </linearGradient>
+      <linearGradient id="aeFacetRight" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFB999" stop-opacity="0.92" />
+        <stop offset="100%" stop-color="#F57D62" stop-opacity="0.88" />
+      </linearGradient>
+      <linearGradient id="aeSilverArch" x1="10%" y1="0%" x2="90%" y2="100%">
+        <stop offset="0%" stop-color="#F7F8FB" />
+        <stop offset="45%" stop-color="#C3C8D3" />
+        <stop offset="78%" stop-color="#9CA2AF" />
+        <stop offset="100%" stop-color="#E4E7EE" />
+      </linearGradient>
+      <linearGradient id="aeFrostRibbon" x1="0%" y1="15%" x2="100%" y2="85%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.88" />
+        <stop offset="35%" stop-color="#E1E4EC" stop-opacity="0.58" />
+        <stop offset="68%" stop-color="#FFFFFF" stop-opacity="0.84" />
+        <stop offset="100%" stop-color="#AEB4C0" stop-opacity="0.72" />
+      </linearGradient>
+      <linearGradient id="aePocketGlass" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.84" />
+        <stop offset="100%" stop-color="#EAE6E5" stop-opacity="0.62" />
+      </linearGradient>
+      <filter id="aeWarmGlow" x="-25%" y="-25%" width="150%" height="160%">
+        <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#E54B4B" flood-opacity="0.22" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Floating Minimal Studio Capsule -->
+  <nav class="studio-dock" aria-label="Studio">
+    <div class="mode-tabs" role="tablist">
+      <div class="mode-pill" id="modePill"></div>
+      <button class="mode-btn" role="tab" aria-selected="true" data-mode="drive">Drive</button>
+      <button class="mode-btn" role="tab" aria-selected="false" data-mode="companion">Desktop</button>
+      <button class="mode-btn" role="tab" aria-selected="false" data-mode="atelier">Atelier</button>
+    </div>
+    <div class="dock-sep"></div>
+    <button class="icon-toggle" id="fontBtn" title="Switch typeface pairing" aria-pressed="false">Aa</button>
+    <button class="icon-toggle" id="themeBtn" title="Light / Dark" aria-pressed="false">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+    </button>
+    <button class="icon-toggle" id="motionBtn" title="Reduced motion" aria-pressed="false">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 12c2.5-4 5-4 7.5 0s5 4 7.5 0 4.5-3.5 5-1"/></svg>
+    </button>
+    <button class="icon-toggle" id="glassBtn" title="Opaque surfaces" aria-pressed="false">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="6" width="11" height="11" rx="3"/><rect x="9" y="9" width="11" height="11" rx="3" fill="currentColor" fill-opacity="0.14"/></svg>
+    </button>
+  </nav>
+
+  <!-- Framed Porcelain / Obsidian Stage -->
+  <div class="stage-shell" id="dropZone">
+
+    <!-- ====================================================================
+         PANEL 1: DRIVE
+         ==================================================================== -->
+    <section class="view-panel is-active" id="panel-drive">
+      <aside class="drive-rail">
+        <div class="rail-top">
+          <div class="brand-row">
+            <button class="brand-emblem-btn" id="homeLogoBtn" title="Aetheris">
+              <svg width="44" height="36" viewBox="0 0 88 72" fill="none">
+                <g filter="url(#aeWarmGlow)">
+                  <path d="M44 19L24 37.5H29.5V56.5C29.5 58.2 30.8 59.5 32.5 59.5H55.5C57.2 59.5 58.5 58.2 58.5 56.5V37.5H64L44 19Z" fill="url(#aeHouseGrad)"/>
+                  <path d="M44 19L64 37.5H58.5V56.5C58.5 58.2 57.2 59.5 55.5 59.5H43.5L51 34L39 23.6L44 19Z" fill="url(#aeFacetRight)"/>
+                  <path d="M40.5 59.5V48.5C40.5 46.5 42.1 45 44 45C45.9 45 47.5 46.5 47.5 48.5V59.5H40.5Z" fill="#FFD3BF" fill-opacity="0.65"/>
+                </g>
+                <path d="M17 38C16.5 26 24.5 18.5 34.5 18.5C37.5 11.5 44.5 8 51.5 9.5C58 10.8 62.5 15.5 64 21.5C71.5 22.5 76 29 74.5 37.5" stroke="url(#aeSilverArch)" stroke-width="4.4" stroke-linecap="round"/>
+                <path d="M44 38.5C35 28 24.5 23.5 17.5 28.5C11.5 32.8 11.8 44.2 18.5 48.8C25.5 53.5 35.5 48.2 44 38.5ZM44 38.5C52.5 28.8 62.5 23.5 69.5 28.2C76.2 32.8 76.5 44.2 70.5 48.5C63.5 53.5 53 49 44 38.5Z" stroke="url(#aeFrostRibbon)" stroke-width="6.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M44 38.5C52.5 28.8 62.5 23.5 69.5 28.2C76.2 32.8 76.5 44.2 70.5 48.5C63.5 53.5 53 49 44 38.5" stroke="#FFFFFF" stroke-opacity="0.82" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+            <button class="plus-btn" id="newBtn" title="Add">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+
+          <div class="nav-stack" id="navStack">
+            <div class="nav-indicator" id="navIndicator"></div>
+            <button class="nav-btn" aria-current="page" data-sec="files">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3.5 7.5a2.5 2.5 0 0 1 2.5-2.5h4l2 2.2h6a2.5 2.5 0 0 1 2.5 2.5v7.8a2.5 2.5 0 0 1-2.5 2.5H6a2.5 2.5 0 0 1-2.5-2.5V7.5Z"/></svg>
+              <span>Files</span>
+            </button>
+            <button class="nav-btn" data-sec="recent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v4.8l3.2 1.9"/></svg>
+              <span>Recent</span>
+            </button>
+            <button class="nav-btn" data-sec="pinned">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.5" fill="currentColor" fill-opacity="0.2"/><circle cx="12" cy="12" r="8.5"/></svg>
+              <span>Pinned</span>
+            </button>
+            <button class="nav-btn" data-sec="trash">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4.5 7h15M9.5 7V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v2M6.8 7l.9 11.5a2 2 0 0 0 2 1.8h4.6a2 2 0 0 0 2-1.8L17.2 7"/></svg>
+              <span>Trash</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="rail-meter" title="5.5 TB of 21.6 TB">
+          <div class="meter-track"><div class="meter-fill"></div></div>
+          <div class="meter-caption">5.5 TB</div>
+        </div>
+      </aside>
+
+      <main class="drive-main">
+        <header class="canvas-header">
+          <div class="crumbs" id="crumbsBar"></div>
+
+          <div class="canvas-tools">
+            <div class="search-pill" id="searchPill">
+              <button class="search-trigger" id="searchTrigger" title="Search (/)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="6.8"/><path d="m16.2 16.2 4.2 4.2"/></svg>
+              </button>
+              <input class="search-input" id="searchInput" type="text" autocomplete="off" spellcheck="false" />
+              <button class="search-clear" id="searchClear" title="Clear">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+              </button>
+            </div>
+
+            <button class="tool-circle" id="layoutBtn" title="Grid / List">
+              <svg id="layoutIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+
+            <button class="tool-circle" id="infoBtn" title="Details" aria-pressed="false">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11.2v4.8M12 8h.01"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="object-scroll" id="objectContainer"></div>
+      </main>
+
+      <!-- Whisper Inspector (Closed by default) -->
+      <aside class="inspector" id="inspectorPane">
+        <div class="inspector-inner" id="inspectorContent"></div>
+      </aside>
+    </section>
+
+    <!-- ====================================================================
+         PANEL 2: DESKTOP COMPANION (Aetheris.exe)
+         ==================================================================== -->
+    <section class="view-panel" id="panel-companion">
+      <div class="companion-view">
+        <div class="companion-window" id="compWindow" data-state="synced">
+          <div class="comp-hero">
+            <svg width="64" height="52" viewBox="0 0 88 72" fill="none">
+              <g filter="url(#aeWarmGlow)">
+                <path d="M44 19L24 37.5H29.5V56.5C29.5 58.2 30.8 59.5 32.5 59.5H55.5C57.2 59.5 58.5 58.2 58.5 56.5V37.5H64L44 19Z" fill="url(#aeHouseGrad)"/>
+                <path d="M44 19L64 37.5H58.5V56.5C58.5 58.2 57.2 59.5 55.5 59.5H43.5L51 34L39 23.6L44 19Z" fill="url(#aeFacetRight)"/>
+                <path d="M40.5 59.5V48.5C40.5 46.5 42.1 45 44 45C45.9 45 47.5 46.5 47.5 48.5V59.5H40.5Z" fill="#FFD3BF" fill-opacity="0.7"/>
+              </g>
+              <path d="M17 38C16.5 26 24.5 18.5 34.5 18.5C37.5 11.5 44.5 8 51.5 9.5C58 10.8 62.5 15.5 64 21.5C71.5 22.5 76 29 74.5 37.5" stroke="url(#aeSilverArch)" stroke-width="4.4" stroke-linecap="round"/>
+              <path d="M44 38.5C35 28 24.5 23.5 17.5 28.5C11.5 32.8 11.8 44.2 18.5 48.8C25.5 53.5 35.5 48.2 44 38.5ZM44 38.5C52.5 28.8 62.5 23.5 69.5 28.2C76.2 32.8 76.5 44.2 70.5 48.5C63.5 53.5 53 49 44 38.5Z" stroke="url(#aeFrostRibbon)" stroke-width="6.4" stroke-linecap="round"/>
+              <path d="M44 38.5C52.5 28.8 62.5 23.5 69.5 28.2C76.2 32.8 76.5 44.2 70.5 48.5C63.5 53.5 53 49 44 38.5" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <h2 class="comp-status" id="compStatusTitle">Synced</h2>
+          </div>
+
+          <div class="comp-line"><div class="comp-line-fill"></div></div>
+
+          <button class="comp-open-btn" id="compFolderBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3.5 7.5a2.5 2.5 0 0 1 2.5-2.5h4l2 2.2h6a2.5 2.5 0 0 1 2.5 2.5v7.8a2.5 2.5 0 0 1-2.5 2.5H6a2.5 2.5 0 0 1-2.5-2.5V7.5Z"/></svg>
+            <span>Open Aetheris</span>
+          </button>
+
+          <div class="comp-switches">
+            <label class="switch-row">
+              <span>Launch at sign-in</span>
+              <button class="switch" role="switch" aria-checked="true"><div class="switch-knob"></div></button>
+            </label>
+            <label class="switch-row">
+              <span>Keep pinned offline</span>
+              <button class="switch" role="switch" aria-checked="true"><div class="switch-knob"></div></button>
+            </label>
+          </div>
+        </div>
+
+        <div class="state-dots" role="tablist" aria-label="State">
+          <button class="state-dot" role="tab" aria-selected="true" data-cstate="synced" title="Synced"></button>
+          <button class="state-dot" role="tab" aria-selected="false" data-cstate="syncing" title="Syncing"></button>
+          <button class="state-dot" role="tab" aria-selected="false" data-cstate="offline" title="Offline"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PANEL 3: ATELIER (Material, Type & Spring Specimen — Zero Prose)
+         ==================================================================== -->
+    <section class="view-panel" id="panel-atelier">
+      <div class="atelier-view">
+        <div class="swatch-row" id="swatchRow">
+          <div class="ceramic-swatch" data-hex="#E54B4B" style="background:#E54B4B;color:#FFF">
+            <span class="swatch-hex">#E54B4B</span>
+          </div>
+          <div class="ceramic-swatch" data-hex="#FFA987" style="background:#FFA987;color:#1E1E24">
+            <span class="swatch-hex">#FFA987</span>
+          </div>
+          <div class="ceramic-swatch" data-hex="#F7EBE8" style="background:#F7EBE8;color:#1E1E24;border-color:rgba(68,65,64,0.1)">
+            <span class="swatch-hex">#F7EBE8</span>
+          </div>
+          <div class="ceramic-swatch" data-hex="#D5D9E2" style="background:linear-gradient(145deg,#F8F9FC 0%,#C5CAD6 55%,#E9ECF2 100%);color:#1E1E24">
+            <span class="swatch-hex">Silver</span>
+          </div>
+          <div class="ceramic-swatch" data-hex="#444140" style="background:#444140;color:#F7EBE8">
+            <span class="swatch-hex">#444140</span>
+          </div>
+          <div class="ceramic-swatch" data-hex="#1E1E24" style="background:#1E1E24;color:#F7EBE8">
+            <span class="swatch-hex">#1E1E24</span>
+          </div>
+        </div>
+
+        <div class="atelier-lower">
+          <div class="specimen-card">
+            <div class="specimen-words">
+              <span class="spec-display">Aetheris</span>
+              <span class="spec-italic">nest</span>
+            </div>
+            <div class="spec-alphabet">a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+            <div class="spec-pair-bar">
+              <span id="pairNameLabel">Canela Deck + Lexend Light</span>
+              <button class="pair-toggle-btn" id="specPairBtn">Switch Pairing</button>
+            </div>
+          </div>
+
+          <div class="physics-dish" id="physicsDish" title="Drag & flick">
+            <div class="well-markers">
+              <div class="well-dot"></div>
+              <div class="well-dot"></div>
+              <div class="well-dot"></div>
+            </div>
+            <div class="spring-puck" id="springPuck">
+              <svg width="44" height="36" viewBox="0 0 88 72" fill="none">
+                <path d="M44 19L24 37.5H29.5V56.5C29.5 58.2 30.8 59.5 32.5 59.5H55.5C57.2 59.5 58.5 58.2 58.5 56.5V37.5H64L44 19Z" fill="url(#aeHouseGrad)"/>
+                <path d="M44 38.5C35 28 24.5 23.5 17.5 28.5C11.5 32.8 11.8 44.2 18.5 48.8C25.5 53.5 35.5 48.2 44 38.5ZM44 38.5C52.5 28.8 62.5 23.5 69.5 28.2C76.2 32.8 76.5 44.2 70.5 48.5C63.5 53.5 53 49 44 38.5Z" stroke="url(#aeFrostRibbon)" stroke-width="6.4" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Add / Context Popover -->
+  <div class="popover-menu" id="popMenu" role="menu"></div>
+
+  <!-- Wordless Sync Progress Orb -->
+  <div class="sync-orb" id="syncOrb">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity="0.15" stroke-width="2.2"/>
+      <circle id="syncArc" cx="12" cy="12" r="9" stroke="#E54B4B" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="56.5" stroke-dashoffset="56.5" transform="rotate(-90 12 12)"/>
+    </svg>
+    <span id="syncCount">1</span>
+  </div>
+
+  <!-- Origin-Anchored Quick Look -->
+  <div class="ql-backdrop" id="qlBackdrop"></div>
+  <div class="ql-card" id="qlCard" role="dialog" aria-modal="true">
+    <div class="ql-stage" id="qlStage">
+      <div class="ql-stage-art" id="qlArt"></div>
+    </div>
+    <div class="ql-footer">
+      <h3 class="ql-title" id="qlTitle"></h3>
+      <div class="ql-controls">
+        <button class="insp-btn" id="qlPinBtn" title="Keep offline">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5" fill="currentColor" fill-opacity="0.25"/><circle cx="12" cy="12" r="9"/></svg>
+        </button>
+        <button class="insp-btn" id="qlCloseBtn" title="Close (Esc)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="hiddenFilePicker" multiple style="display:none" />
+</div>
+
+<script>
+(() => {
+  /* ==========================================================================
+     1. APPLE FLUID PHYSICS — Second-Order Analytical Spring, Rubberband, Project
+     ========================================================================== */
+  class Spring {
+    constructor(dampingRatio = 1.0, response = 0.3) {
+      this.z = dampingRatio;
+      this.r = response;
+      this.pos = 0;
+      this.vel = 0;
+      this.target = 0;
+    }
+    snap(v) {
+      this.pos = v;
+      this.target = v;
+      this.vel = 0;
+    }
+    step(dt) {
+      const clampedDt = Math.min(dt, 0.064);
+      const omega = (2 * Math.PI) / this.r;
+      const f = 1 + 2 * clampedDt * this.z * omega;
+      const oo = omega * omega;
+      const hoo = clampedDt * oo;
+      const hhoo = clampedDt * hoo;
+      const detInv = 1 / (f + hhoo);
+      const detX = f * this.pos + clampedDt * this.vel + hhoo * this.target;
+      const detV = this.vel + hoo * (this.target - this.pos);
+      this.pos = detX * detInv;
+      this.vel = detV * detInv;
+      if (Math.abs(this.pos - this.target) < 0.08 && Math.abs(this.vel) < 0.08) {
+        this.pos = this.target;
+        this.vel = 0;
+        return false;
+      }
+      return true;
+    }
+  }
+
+  function rubberband(offset, dim, coeff = 0.55) {
+    if (dim <= 0) return 0;
+    const sign = offset < 0 ? -1 : 1;
+    const abs = Math.abs(offset);
+    return sign * (1 - (1 / ((abs * coeff / dim) + 1))) * dim;
+  }
+
+  function project(vPxPerSec, decel = 0.998) {
+    return (vPxPerSec / 1000) * decel / (1 - decel);
+  }
+
+  let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ==========================================================================
+     2. BESPOKE SCULPTURAL ARTWORK GENERATORS (Zero text stamps)
+     ========================================================================== */
+  function renderVisual(item, large = false) {
+    if (item.kind === 'folder') {
+      const accent2 = item.tint || '#FFA987';
+      return `
+        <svg viewBox="0 0 120 92" width="${large ? 148 : 108}" height="${large ? 114 : 84}" fill="none">
+          <ellipse cx="60" cy="80" rx="42" ry="6" fill="#E54B4B" fill-opacity="0.12"/>
+          <rect x="14" y="20" width="92" height="58" rx="15" fill="url(#aeSilverArch)" fill-opacity="0.55"/>
+          <path d="M14 29C14 21.8 19.8 16 27 16H45.5C49.2 16 52.7 17.6 55.1 20.4L58.4 24.2H93C100.2 24.2 106 30 106 37.2V64C106 71.7 99.7 78 92 78H28C20.3 78 14 71.7 14 64V29Z" fill="url(#aeSilverArch)" fill-opacity="0.42"/>
+          <!-- Overlapping warm Nest facets inside -->
+          <path d="M25 66L49 27L76 66H25Z" fill="#E54B4B" fill-opacity="0.88"/>
+          <path d="M46 66L72 29L96 66H46Z" fill="${accent2}" fill-opacity="0.9"/>
+          <!-- Frosted silver-glass front pocket -->
+          <rect x="14" y="37" width="92" height="41" rx="14" fill="url(#aePocketGlass)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.2"/>
+          <path d="M49 37.6H71" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    if (item.art === 'alps') {
+      return `
+        <div class="art-print" style="${large ? 'width:230px;height:176px' : ''}">
+          <svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="skyAlps" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#FBE7DF"/>
+                <stop offset="65%" stop-color="#FFA987"/>
+                <stop offset="100%" stop-color="#E54B4B"/>
+              </linearGradient>
+            </defs>
+            <rect width="160" height="120" fill="url(#skyAlps)"/>
+            <circle cx="116" cy="36" r="15" fill="#FFF8F4" fill-opacity="0.85"/>
+            <path d="M-10 98L42 46L88 86L124 54L172 98V125H-10Z" fill="#6E5A58" fill-opacity="0.55"/>
+            <path d="M-10 120L28 68L68 102L108 62L170 120Z" fill="#1E1E24"/>
+            <path d="M108 62L125 78L104 84Z" fill="#FFA987" fill-opacity="0.45"/>
+          </svg>
+        </div>`;
+    }
+
+    if (item.art === 'atrium') {
+      return `
+        <div class="art-print" style="${large ? 'width:230px;height:176px' : ''}">
+          <svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice">
+            <rect width="160" height="120" fill="#F4E3DC"/>
+            <path d="M0 0H66V120H0Z" fill="#E6CFC7"/>
+            <path d="M54 120V48C54 33.6 65.6 22 80 22C94.4 22 106 33.6 106 48V120Z" fill="url(#aeHouseGrad)"/>
+            <path d="M54 120L138 82V120Z" fill="#FFFDFB" fill-opacity="0.58"/>
+            <circle cx="80" cy="54" r="10" fill="#FFFDFB" fill-opacity="0.78"/>
+          </svg>
+        </div>`;
+    }
+
+    if (item.art === 'mobius') {
+      return `
+        <svg viewBox="0 0 120 96" width="${large ? 180 : 108}" height="${large ? 144 : 86}" fill="none">
+          <ellipse cx="60" cy="82" rx="34" ry="5.5" fill="#1E1E24" fill-opacity="0.12"/>
+          <circle cx="60" cy="46" r="22" fill="url(#aeHouseGrad)"/>
+          <path d="M60 46C46 31 30 25 20 32C11 38 12 55 21 61C31 68 47 60 60 46ZM60 46C73 32 89 24 99 31C108 37 109 54 100 60C90 67 74 61 60 46Z" stroke="url(#aeFrostRibbon)" stroke-width="9" stroke-linecap="round"/>
+          <path d="M60 46C73 32 89 24 99 31C108 37 109 54 100 60" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    if (item.art === 'audio') {
+      return `
+        <svg viewBox="0 0 120 96" width="${large ? 168 : 102}" height="${large ? 136 : 82}" fill="none">
+          <circle cx="60" cy="48" r="34" fill="url(#aeSilverArch)" fill-opacity="0.65" stroke="#FFFFFF" stroke-width="1.2"/>
+          <circle cx="60" cy="48" r="24" stroke="#444140" stroke-opacity="0.16" stroke-width="1"/>
+          <circle cx="60" cy="48" r="16" stroke="#444140" stroke-opacity="0.18" stroke-width="1"/>
+          <path d="M60 14A34 34 0 0 1 94 48" stroke="#E54B4B" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="60" cy="48" r="7.5" fill="url(#aeHouseGrad)"/>
+        </svg>`;
+    }
+
+    /* Minimal Rag-Paper Document (Zero text stamps) */
+    return `
+      <div class="paper-sheet" style="${large ? 'width:136px;height:180px' : ''}">
+        <svg viewBox="0 0 88 112" fill="none">
+          <path d="M62 0H70V22L66 18L62 22V0Z" fill="url(#aeHouseGrad)"/>
+          <line x1="18" y1="38" x2="54" y2="38" stroke="currentColor" stroke-opacity="0.22" stroke-width="2" stroke-linecap="round"/>
+          <line x1="18" y1="52" x2="70" y2="52" stroke="currentColor" stroke-opacity="0.12" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="18" y1="62" x2="66" y2="62" stroke="currentColor" stroke-opacity="0.12" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="18" y1="72" x2="60" y2="72" stroke="currentColor" stroke-opacity="0.12" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="18" y1="86" x2="42" y2="86" stroke="#E54B4B" stroke-opacity="0.45" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>`;
+  }
+
+  /* ==========================================================================
+     3. STATE & CURATED DATASET
+     ========================================================================== */
+  const items = [
+    { id: 'f-design', parent: null, kind: 'folder', name: 'Industrial Design', size: '1.4 GB', modified: 'Today', pinned: true, recent: true, trashed: false, tint: '#FFA987', versions: 1 },
+    { id: 'f-neg', parent: null, kind: 'folder', name: 'Studio Negatives', size: '3.8 GB', modified: 'Yesterday', pinned: false, recent: true, trashed: false, tint: '#F5856B', versions: 1 },
+    { id: 'f-arch', parent: null, kind: 'folder', name: 'Contracts', size: '64 MB', modified: 'Oct 28', pinned: true, recent: false, trashed: false, tint: '#FFB899', versions: 1 },
+    { id: 'i-mobius', parent: null, kind: 'file', art: 'mobius', typeLabel: '3D Sculpture', name: 'Mobius Study', size: '42 MB', modified: 'Today, 18:40', pinned: true, recent: true, trashed: false, versions: 3 },
+    { id: 'i-alps', parent: null, kind: 'file', art: 'alps', typeLabel: 'Photograph', name: 'Passo Giau', size: '28 MB', modified: 'Yesterday', pinned: true, recent: true, trashed: false, versions: 2 },
+    { id: 'i-atrium', parent: null, kind: 'file', art: 'atrium', typeLabel: 'Photograph', name: 'Atrium Light', size: '64 MB', modified: 'Nov 02', pinned: false, recent: true, trashed: false, versions: 1 },
+    { id: 'i-cello', parent: null, kind: 'file', art: 'audio', typeLabel: 'Recording', name: 'Cello Sketch', size: '36 MB', modified: 'Oct 30', pinned: false, recent: false, trashed: false, versions: 2 },
+    { id: 'i-lease', parent: null, kind: 'file', art: 'doc', typeLabel: 'Document', name: 'Atelier Lease', size: '2.4 MB', modified: 'Oct 19', pinned: true, recent: false, trashed: false, versions: 4 },
+    /* Inside Industrial Design */
+    { id: 'd-vessel', parent: 'f-design', kind: 'file', art: 'mobius', typeLabel: '3D Sculpture', name: 'Porcelain Shell', size: '58 MB', modified: 'Today', pinned: true, recent: true, trashed: false, versions: 3 },
+    { id: 'd-notes', parent: 'f-design', kind: 'file', art: 'doc', typeLabel: 'Notes', name: 'Tolerance Spec', size: '840 KB', modified: 'Yesterday', pinned: true, recent: false, trashed: false, versions: 2 },
+    /* Inside Studio Negatives */
+    { id: 'n-dawn', parent: 'f-neg', kind: 'file', art: 'atrium', typeLabel: 'Photograph', name: 'Solstice Arch', size: '82 MB', modified: 'Yesterday', pinned: false, recent: true, trashed: false, versions: 1 },
+    /* Trashed sample */
+    { id: 't-draft', parent: null, kind: 'file', art: 'doc', typeLabel: 'Document', name: 'Early Draft', size: '1.1 MB', modified: 'Oct 04', pinned: false, recent: false, trashed: true, versions: 1 }
+  ];
+
+  const state = {
+    mode: 'drive',
+    section: 'files',
+    folderId: null,
+    layout: 'grid',
+    query: '',
+    selectedId: 'i-mobius',
+    inspectorOpen: false,
+    activeVersion: 3
+  };
+
+  /* ==========================================================================
+     4. SPRING CHOREOGRAPHY FOR NAVIGATION PILLS
+     ========================================================================== */
+  const root = document.getElementById('aeRoot');
+  const modePill = document.getElementById('modePill');
+  const modeBtns = [...document.querySelectorAll('.mode-btn')];
+  const modeSpringX = new Spring(1.0, 0.26);
+  const modeSpringW = new Spring(1.0, 0.26);
+  let modeAnim = 0;
+
+  function syncModePill(immediate = false) {
+    const btn = modeBtns.find(b => b.dataset.mode === state.mode);
+    if (!btn) return;
+    const x = btn.offsetLeft;
+    const w = btn.offsetWidth;
+    if (immediate || reducedMotion) {
+      modeSpringX.snap(x);
+      modeSpringW.snap(w);
+      modePill.style.transform = `translate3d(${x}px,0,0)`;
+      modePill.style.width = `${w}px`;
+      return;
+    }
+    modeSpringX.target = x;
+    modeSpringW.target = w;
+    if (!modeAnim) {
+      let last = performance.now();
+      const tick = (now) => {
+        const dt = (now - last) / 1000;
+        last = now;
+        const a = modeSpringX.step(dt);
+        const b = modeSpringW.step(dt);
+        modePill.style.transform = `translate3d(${modeSpringX.pos}px,0,0)`;
+        modePill.style.width = `${modeSpringW.pos}px`;
+        modeAnim = (a || b) ? requestAnimationFrame(tick) : 0;
+      };
+      modeAnim = requestAnimationFrame(tick);
+    }
+  }
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener('pointerdown', () => {
+      state.mode = btn.dataset.mode;
+      modeBtns.forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+      document.querySelectorAll('.view-panel').forEach(p => {
+        p.classList.toggle('is-active', p.id === `panel-${state.mode}`);
+      });
+      syncModePill(false);
+      if (state.mode === 'atelier') initPhysicsDish();
+    });
+  });
+
+  const navIndicator = document.getElementById('navIndicator');
+  const navBtns = [...document.querySelectorAll('.nav-btn')];
+  const navSpringY = new Spring(1.0, 0.26);
+  let navAnim = 0;
+
+  function syncNavPill(immediate = false) {
+    const btn = navBtns.find(b => b.dataset.sec === state.section);
+    if (!btn) return;
+    const y = btn.offsetTop;
+    if (immediate || reducedMotion) {
+      navSpringY.snap(y);
+      navIndicator.style.transform = `translate3d(0,${y}px,0)`;
+      return;
+    }
+    navSpringY.target = y;
+    if (!navAnim) {
+      let last = performance.now();
+      const tick = (now) => {
+        const dt = (now - last) / 1000;
+        last = now;
+        const moving = navSpringY.step(dt);
+        navIndicator.style.transform = `translate3d(0,${navSpringY.pos}px,0)`;
+        navAnim = moving ? requestAnimationFrame(tick) : 0;
+      };
+      navAnim = requestAnimationFrame(tick);
+    }
+  }
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('pointerdown', () => {
+      state.section = btn.dataset.sec;
+      state.folderId = null;
+      navBtns.forEach(b => {
+        if (b === btn) b.setAttribute('aria-current', 'page');
+        else b.removeAttribute('aria-current');
+      });
+      syncNavPill(false);
+      renderDrive();
+    });
+  });
+
+  document.getElementById('homeLogoBtn').addEventListener('click', () => {
+    state.section = 'files';
+    state.folderId = null;
+    navBtns.forEach(b => {
+      if (b.dataset.sec === 'files') b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
+    });
+    syncNavPill(false);
+    renderDrive();
+  });
+
+  /* ==========================================================================
+     5. ENVIRONMENT ICON TOGGLES (Font, Theme, Motion, Glass)
+     ========================================================================== */
+  const fontBtn = document.getElementById('fontBtn');
+  const pairNameLabel = document.getElementById('pairNameLabel');
+  function toggleFontPairing() {
+    const next = root.dataset.font === 'editorial' ? 'sans' : 'editorial';
+    root.dataset.font = next;
+    fontBtn.setAttribute('aria-pressed', String(next === 'sans'));
+    pairNameLabel.textContent = next === 'editorial'
+      ? 'Canela Deck + Lexend Light'
+      : 'Lexend Light + Lexend Medium';
+  }
+  fontBtn.addEventListener('click', toggleFontPairing);
+  document.getElementById('specPairBtn').addEventListener('click', toggleFontPairing);
+
+  const themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', () => {
+    const dark = root.dataset.theme !== 'dark';
+    root.dataset.theme = dark ? 'dark' : 'light';
+    themeBtn.setAttribute('aria-pressed', String(dark));
+  });
+
+  const motionBtn = document.getElementById('motionBtn');
+  motionBtn.addEventListener('click', () => {
+    reducedMotion = !reducedMotion;
+    motionBtn.setAttribute('aria-pressed', String(reducedMotion));
+  });
+
+  const glassBtn = document.getElementById('glassBtn');
+  glassBtn.addEventListener('click', () => {
+    const op = root.dataset.opaque !== 'true';
+    root.dataset.opaque = String(op);
+    glassBtn.setAttribute('aria-pressed', String(op));
+  });
+
+  /* ==========================================================================
+     6. DRIVE RENDERING (Gallery Grid + Whisper List + Optional Inspector)
+     ========================================================================== */
+  const crumbsBar = document.getElementById('crumbsBar');
+  const objectContainer = document.getElementById('objectContainer');
+  const inspectorPane = document.getElementById('inspectorPane');
+  const inspectorContent = document.getElementById('inspectorContent');
+
+  function visibleItems() {
+    const q = state.query.trim().toLowerCase();
+    return items.filter(it => {
+      if (state.section === 'trash') return it.trashed && (!q || it.name.toLowerCase().includes(q));
+      if (it.trashed) return false;
+      if (q) return it.name.toLowerCase().includes(q);
+      if (state.section === 'recent') return it.recent && it.kind === 'file';
+      if (state.section === 'pinned') return it.pinned;
+      return it.parent === state.folderId;
+    });
+  }
+
+  function renderCrumbs() {
+    const secNames = { files: 'Files', recent: 'Recent', pinned: 'Pinned', trash: 'Trash' };
+    const rootTitle = secNames[state.section];
+    if (state.section === 'files' && state.folderId) {
+      const folder = items.find(i => i.id === state.folderId);
+      crumbsBar.innerHTML = `
+        <button class="crumb-root is-parent" id="crumbBackBtn">Files</button>
+        <span class="crumb-sep">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+        </span>
+        <span class="crumb-current">${folder ? folder.name : ''}</span>
+      `;
+      document.getElementById('crumbBackBtn').addEventListener('click', () => {
+        state.folderId = null;
+        renderDrive();
+      });
+    } else {
+      crumbsBar.innerHTML = `<button class="crumb-root">${rootTitle}</button>`;
+    }
+  }
+
+  function renderDrive() {
+    renderCrumbs();
+    const list = visibleItems();
+    if (!list.some(i => i.id === state.selectedId) && list.length) {
+      state.selectedId = list[0].id;
+    }
+
+    if (!list.length) {
+      objectContainer.innerHTML = `
+        <div style="height:100%;display:grid;place-items:center;opacity:0.28">
+          <svg width="72" height="58" viewBox="0 0 88 72" fill="none">
+            <path d="M17 38C16.5 26 24.5 18.5 34.5 18.5C37.5 11.5 44.5 8 51.5 9.5C58 10.8 62.5 15.5 64 21.5C71.5 22.5 76 29 74.5 37.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M44 38.5C35 28 24.5 23.5 17.5 28.5C11.5 32.8 11.8 44.2 18.5 48.8C25.5 53.5 35.5 48.2 44 38.5ZM44 38.5C52.5 28.8 62.5 23.5 69.5 28.2C76.2 32.8 76.5 44.2 70.5 48.5C63.5 53.5 53 49 44 38.5Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>`;
+      renderInspector();
+      return;
+    }
+
+    if (state.layout === 'grid') {
+      objectContainer.innerHTML = `<div class="object-grid" id="gridWrap">${list.map(it => `
+        <div class="tile ${it.id === state.selectedId ? 'is-selected' : ''}" data-id="${it.id}" data-kind="${it.kind}">
+          <div class="tile-stage">${renderVisual(it, false)}</div>
+          <div class="tile-caption">
+            <span class="tile-name">${it.name}</span>
+            ${it.pinned ? '<span class="pin-bead" title="Offline"></span>' : ''}
+          </div>
+        </div>
+      `).join('')}</div>`;
+      bindGridInteractions();
+    } else {
+      objectContainer.innerHTML = `<div class="object-list">${list.map(it => `
+        <div class="list-row ${it.id === state.selectedId ? 'is-selected' : ''}" data-id="${it.id}" data-kind="${it.kind}">
+          <div class="row-visual">${renderVisual(it, false)}</div>
+          <span class="row-name">${it.name}</span>
+          <span class="row-size">${it.size}</span>
+          <button class="row-pin-btn" data-pin="${it.id}" aria-pressed="${it.pinned}" title="Keep offline">
+            <span class="ring"></span>
+          </button>
+        </div>
+      `).join('')}</div>`;
+      bindListInteractions();
+    }
+
+    renderInspector();
+  }
+
+  function renderInspector() {
+    inspectorPane.classList.toggle('is-open', state.inspectorOpen);
+    const it = items.find(x => x.id === state.selectedId);
+    if (!it) {
+      inspectorContent.innerHTML = '';
+      return;
+    }
+    const vCount = it.versions || 1;
+    let dots = '';
+    for (let v = 1; v <= vCount; v++) {
+      dots += `<button class="v-dot" data-v="${v}" aria-selected="${v === vCount}" title="v${v}"></button>`;
+    }
+    inspectorContent.innerHTML = `
+      <div class="insp-preview">${renderVisual(it, true)}</div>
+      <h3 class="insp-title">${it.name}</h3>
+      <div class="insp-actions">
+        <button class="insp-btn ${it.pinned ? 'is-active' : ''}" id="inspPin" title="Keep offline">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4.5" fill="currentColor" fill-opacity="0.3"/><circle cx="12" cy="12" r="8.5"/></svg>
+        </button>
+        ${it.kind === 'file' ? `
+        <button class="insp-btn" id="inspPreview" title="Preview">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></svg>
+        </button>` : ''}
+        <button class="insp-btn" id="inspTrash" title="${it.trashed ? 'Restore' : 'Move to trash'}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 7h14M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M7.2 7l.8 11.2c.1 1 .9 1.8 1.9 1.8h4.2c1 0 1.8-.8 1.9-1.8L16.8 7"/></svg>
+        </button>
+      </div>
+      <div class="insp-facts">
+        <div class="fact-line"><span>Kind</span><span>${it.kind === 'folder' ? 'Folder' : it.typeLabel}</span></div>
+        <div class="fact-line"><span>Size</span><span>${it.size}</span></div>
+        <div class="fact-line"><span>Modified</span><span>${it.modified}</span></div>
+        ${it.kind === 'file' ? `<div class="fact-line"><span>History</span><span class="version-dots">${dots}</span></div>` : ''}
+      </div>
+    `;
+
+    document.getElementById('inspPin')?.addEventListener('click', () => {
+      it.pinned = !it.pinned;
+      pulseSyncOrb(1);
+      renderDrive();
+    });
+    document.getElementById('inspPreview')?.addEventListener('click', () => {
+      const el = objectContainer.querySelector(`[data-id="${it.id}"]`);
+      openQuickLook(it, el ? el.getBoundingClientRect() : null);
+    });
+    document.getElementById('inspTrash')?.addEventListener('click', () => {
+      it.trashed = !it.trashed;
+      renderDrive();
+    });
+    inspectorContent.querySelectorAll('.v-dot').forEach(d => {
+      d.addEventListener('click', () => {
+        inspectorContent.querySelectorAll('.v-dot').forEach(x => x.setAttribute('aria-selected', String(x === d)));
+      });
+    });
+  }
+
+  /* ==========================================================================
+     7. 1:1 POINTER DRAG-INTO-FOLDER, SELECTION, DOUBLE-CLICK & CONTEXT MENU
+     ========================================================================== */
+  function bindGridInteractions() {
+    objectContainer.querySelectorAll('.tile').forEach(tile => {
+      const id = tile.dataset.id;
+      const it = items.find(x => x.id === id);
+
+      tile.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        state.selectedId = id;
+        renderDrive();
+        openItemContextMenu(e.clientX, e.clientY, it, tile);
+      });
+
+      tile.addEventListener('dblclick', () => {
+        if (it.kind === 'folder') {
+          state.section = 'files';
+          state.folderId = it.id;
+          renderDrive();
+        } else {
+          openQuickLook(it, tile.getBoundingClientRect());
+        }
+      });
+
+      /* 1:1 Pointer tracking with grab offset to drop files into folders */
+      tile.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
+        state.selectedId = id;
+        objectContainer.querySelectorAll('.tile').forEach(t => t.classList.toggle('is-selected', t === tile));
+        renderInspector();
+
+        if (it.kind !== 'file') return;
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const rect = tile.getBoundingClientRect();
+        const grabDX = startX - rect.left;
+        const grabDY = startY - rect.top;
+        let ghost = null;
+        let hoveredFolder = null;
+
+        const onMove = ev => {
+          const dist = Math.hypot(ev.clientX - startX, ev.clientY - startY);
+          if (!ghost && dist > 8) {
+            ghost = document.createElement('div');
+            ghost.className = 'drag-ghost';
+            ghost.innerHTML = `${renderVisual(it, false)}<span class="tile-name">${it.name}</span>`;
+            root.appendChild(ghost);
+            tile.style.opacity = '0.35';
+          }
+          if (ghost) {
+            ghost.style.transform = `translate3d(${ev.clientX - grabDX}px, ${ev.clientY - grabDY}px, 0) scale(0.96)`;
+            const under = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.tile[data-kind="folder"]');
+            if (hoveredFolder && hoveredFolder !== under) hoveredFolder.classList.remove('is-drop-target');
+            hoveredFolder = under || null;
+            if (hoveredFolder) hoveredFolder.classList.add('is-drop-target');
+          }
+        };
+
+        const onUp = () => {
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onUp);
+          tile.style.opacity = '';
+          if (ghost) {
+            if (hoveredFolder) {
+              hoveredFolder.classList.remove('is-drop-target');
+              it.parent = hoveredFolder.dataset.id;
+              ghost.remove();
+              pulseSyncOrb(1);
+              renderDrive();
+            } else {
+              ghost.remove();
+            }
+          }
+        };
+
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
+      });
+    });
+  }
+
+  function bindListInteractions() {
+    objectContainer.querySelectorAll('.list-row').forEach(row => {
+      const id = row.dataset.id;
+      const it = items.find(x => x.id === id);
+
+      row.addEventListener('click', e => {
+        if (e.target.closest('.row-pin-btn')) return;
+        state.selectedId = id;
+        renderDrive();
+      });
+
+      row.addEventListener('dblclick', () => {
+        if (it.kind === 'folder') {
+          state.section = 'files';
+          state.folderId = it.id;
+          renderDrive();
+        } else {
+          openQuickLook(it, row.getBoundingClientRect());
+        }
+      });
+
+      row.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        state.selectedId = id;
+        renderDrive();
+        openItemContextMenu(e.clientX, e.clientY, it, row);
+      });
+    });
+
+    objectContainer.querySelectorAll('.row-pin-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const it = items.find(x => x.id === btn.dataset.pin);
+        if (it) {
+          it.pinned = !it.pinned;
+          pulseSyncOrb(1);
+          renderDrive();
+        }
+      });
+    });
+  }
+
+  /* Toolbar controls */
+  const searchPill = document.getElementById('searchPill');
+  const searchInput = document.getElementById('searchInput');
+  document.getElementById('searchTrigger').addEventListener('click', () => {
+    const open = !searchPill.classList.contains('is-open');
+    searchPill.classList.toggle('is-open', open);
+    if (open) searchInput.focus();
+    else {
+      searchInput.value = '';
+      state.query = '';
+      searchPill.classList.remove('has-value');
+      renderDrive();
+    }
+  });
+  searchInput.addEventListener('input', () => {
+    state.query = searchInput.value;
+    searchPill.classList.toggle('has-value', state.query.length > 0);
+    renderDrive();
+  });
+  document.getElementById('searchClear').addEventListener('click', () => {
+    searchInput.value = '';
+    state.query = '';
+    searchPill.classList.remove('has-value');
+    searchInput.focus();
+    renderDrive();
+  });
+
+  const layoutBtn = document.getElementById('layoutBtn');
+  const layoutIcon = document.getElementById('layoutIcon');
+  layoutBtn.addEventListener('click', () => {
+    state.layout = state.layout === 'grid' ? 'list' : 'grid';
+    layoutIcon.innerHTML = state.layout === 'grid'
+      ? '<path d="M4 7h16M4 12h16M4 17h16"/>'
+      : '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>';
+    renderDrive();
+  });
+
+  const infoBtn = document.getElementById('infoBtn');
+  infoBtn.addEventListener('click', () => {
+    state.inspectorOpen = !state.inspectorOpen;
+    infoBtn.setAttribute('aria-pressed', String(state.inspectorOpen));
+    renderInspector();
+  });
+
+  /* ==========================================================================
+     8. ORIGIN-ANCHORED POPOVER MENUS & WORDLESS RING PROGRESS
+     ========================================================================== */
+  const popMenu = document.getElementById('popMenu');
+  function showMenu(x, y, entries) {
+    popMenu.innerHTML = entries.map((en, idx) => `
+      <button class="menu-item ${en.danger ? 'is-danger' : ''}" data-idx="${idx}">
+        ${en.icon}<span>${en.label}</span>
+      </button>
+    `).join('');
+    popMenu.style.left = `${Math.min(x, window.innerWidth - 190)}px`;
+    popMenu.style.top = `${Math.min(y, window.innerHeight - 170)}px`;
+    popMenu.classList.add('is-open');
+    popMenu.querySelectorAll('.menu-item').forEach(b => {
+      b.addEventListener('click', () => {
+        popMenu.classList.remove('is-open');
+        entries[Number(b.dataset.idx)].run();
+      });
+    });
+  }
+  window.addEventListener('pointerdown', e => {
+    if (!e.target.closest('#popMenu') && !e.target.closest('#newBtn')) {
+      popMenu.classList.remove('is-open');
+    }
+  });
+
+  const filePicker = document.getElementById('hiddenFilePicker');
+  document.getElementById('newBtn').addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    showMenu(r.left, r.bottom + 8, [
+      {
+        label: 'Upload',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 16V5M7.5 9.5 12 5l4.5 4.5M5 19h14"/></svg>',
+        run: () => filePicker.click()
+      },
+      {
+        label: 'New folder',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3.5 7.5a2.5 2.5 0 0 1 2.5-2.5h4l2 2.2h6a2.5 2.5 0 0 1 2.5 2.5v7.8a2.5 2.5 0 0 1-2.5 2.5H6a2.5 2.5 0 0 1-2.5-2.5V7.5Z"/></svg>',
+        run: () => {
+          const id = 'f-' + Date.now();
+          items.unshift({
+            id, parent: state.folderId, kind: 'folder', name: 'Untitled Nest',
+            size: '0 KB', modified: 'Just now', pinned: true, recent: true, trashed: false, tint: '#FFA987', versions: 1
+          });
+          state.selectedId = id;
+          renderDrive();
+        }
+      }
+    ]);
+  });
+
+  function openItemContextMenu(x, y, it, anchorEl) {
+    const entries = [];
+    if (it.kind === 'file') {
+      entries.push({
+        label: 'Preview',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></svg>',
+        run: () => openQuickLook(it, anchorEl.getBoundingClientRect())
+      });
+    }
+    entries.push({
+      label: it.pinned ? 'Remove offline' : 'Keep offline',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="8.5"/></svg>',
+      run: () => { it.pinned = !it.pinned; pulseSyncOrb(1); renderDrive(); }
+    });
+    entries.push({
+      label: it.trashed ? 'Restore' : 'Move to trash',
+      danger: !it.trashed,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 7h14M7.5 7l.8 11.5c.1.9.8 1.5 1.7 1.5h4c.9 0 1.6-.6 1.7-1.5L16.5 7"/></svg>',
+      run: () => { it.trashed = !it.trashed; renderDrive(); }
+    });
+    showMenu(x, y, entries);
+  }
+
+  /* Wordless Circular Sync Ring */
+  const syncOrb = document.getElementById('syncOrb');
+  const syncArc = document.getElementById('syncArc');
+  const syncCount = document.getElementById('syncCount');
+  let syncTimer = 0;
+
+  function pulseSyncOrb(count = 1) {
+    clearTimeout(syncTimer);
+    syncCount.textContent = String(count);
+    syncOrb.classList.add('is-visible');
+    syncArc.style.transition = 'none';
+    syncArc.style.strokeDashoffset = '56.5';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        syncArc.style.transition = 'stroke-dashoffset 0.9s cubic-bezier(0.22, 1, 0.36, 1)';
+        syncArc.style.strokeDashoffset = '0';
+      });
+    });
+    syncTimer = setTimeout(() => syncOrb.classList.remove('is-visible'), 1350);
+  }
+
+  function ingestFiles(fileList) {
+    if (!fileList.length) return;
+    [...fileList].forEach(f => {
+      const base = f.name.replace(/\.[^.]+$/, '') || f.name;
+      const isImg = /\.(jpg|jpeg|png|webp|avif)$/i.test(f.name);
+      items.unshift({
+        id: 'u-' + Math.random().toString(36).slice(2, 8),
+        parent: state.folderId,
+        kind: 'file',
+        art: isImg ? 'alps' : 'doc',
+        typeLabel: isImg ? 'Photograph' : 'Document',
+        name: base,
+        size: `${Math.max(1, Math.round(f.size / 1024))} KB`,
+        modified: 'Just now',
+        pinned: true,
+        recent: true,
+        trashed: false,
+        versions: 1
+      });
+    });
+    pulseSyncOrb(fileList.length);
+    renderDrive();
+  }
+  filePicker.addEventListener('change', e => ingestFiles(e.target.files));
+
+  const dropZone = document.getElementById('dropZone');
+  dropZone.addEventListener('dragover', e => e.preventDefault());
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    if (e.dataTransfer?.files?.length) ingestFiles(e.dataTransfer.files);
+  });
+
+  /* ==========================================================================
+     9. ORIGIN-ANCHORED QUICK LOOK (Symmetric Open & Close Spring)
+     ========================================================================== */
+  const qlBackdrop = document.getElementById('qlBackdrop');
+  const qlCard = document.getElementById('qlCard');
+  const qlArt = document.getElementById('qlArt');
+  const qlTitle = document.getElementById('qlTitle');
+  const qlPinBtn = document.getElementById('qlPinBtn');
+  const qlStage = document.getElementById('qlStage');
+
+  let qlOriginRect = null;
+  let qlItem = null;
+  const qlSpring = new Spring(0.94, 0.32);
+  let qlRAF = 0;
+
+  function openQuickLook(item, rect) {
+    qlItem = item;
+    qlOriginRect = rect;
+    qlArt.innerHTML = renderVisual(item, true);
+    qlTitle.textContent = item.name;
+    qlPinBtn.classList.toggle('is-active', item.pinned);
+    qlBackdrop.classList.add('is-open');
+    qlCard.classList.add('is-open');
+
+    if (reducedMotion || !rect) {
+      qlCard.style.opacity = '1';
+      qlCard.style.transform = 'translate3d(0,0,0) scale(1)';
+      return;
+    }
+    animateQuickLook(0, 1);
+  }
+
+  function closeQuickLook() {
+    if (!qlCard.classList.contains('is-open')) return;
+    qlBackdrop.classList.remove('is-open');
+    if (reducedMotion || !qlOriginRect) {
+      qlCard.classList.remove('is-open');
+      qlCard.style.opacity = '0';
+      return;
+    }
+    animateQuickLook(qlSpring.pos || 1, 0, () => {
+      qlCard.classList.remove('is-open');
+    });
+  }
+
+  function animateQuickLook(from, to, onDone) {
+    cancelAnimationFrame(qlRAF);
+    qlSpring.pos = from;
+    qlSpring.target = to;
+    const cardRect = qlCard.getBoundingClientRect();
+    const dx = qlOriginRect ? (qlOriginRect.left + qlOriginRect.width / 2) - (window.innerWidth / 2) : 0;
+    const dy = qlOriginRect ? (qlOriginRect.top + qlOriginRect.height / 2) - (window.innerHeight / 2) : 24;
+
+    let last = performance.now();
+    const step = now => {
+      const dt = (now - last) / 1000;
+      last = now;
+      const moving = qlSpring.step(dt);
+      const t = qlSpring.pos;
+      const inv = 1 - t;
+      const sc = 0.36 + 0.64 * t;
+      qlCard.style.opacity = String(Math.max(0, Math.min(1, t * 1.15)));
+      qlCard.style.transform = `translate3d(${dx * inv}px, ${dy * inv}px, 0) scale(${sc})`;
+      if (moving) qlRAF = requestAnimationFrame(step);
+      else if (onDone) onDone();
+    };
+    qlRAF = requestAnimationFrame(step);
+  }
+
+  qlBackdrop.addEventListener('click', closeQuickLook);
+  document.getElementById('qlCloseBtn').addEventListener('click', closeQuickLook);
+  qlPinBtn.addEventListener('click', () => {
+    if (!qlItem) return;
+    qlItem.pinned = !qlItem.pinned;
+    qlPinBtn.classList.toggle('is-active', qlItem.pinned);
+    pulseSyncOrb(1);
+    renderDrive();
+  });
+
+  /* Subtle 3D parallax tilt inside Quick Look stage */
+  qlStage.addEventListener('pointermove', e => {
+    if (reducedMotion) return;
+    const r = qlStage.getBoundingClientRect();
+    const nx = ((e.clientX - r.left) / r.width - 0.5) * 16;
+    const ny = ((e.clientY - r.top) / r.height - 0.5) * -14;
+    qlArt.style.transform = `rotateY(${nx}deg) rotateX(${ny}deg)`;
+  });
+  qlStage.addEventListener('pointerleave', () => {
+    qlArt.style.transform = 'rotateY(0deg) rotateX(0deg)';
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeQuickLook();
+    if (e.key === '/' && document.activeElement !== searchInput && state.mode === 'drive') {
+      e.preventDefault();
+      searchPill.classList.add('is-open');
+      searchInput.focus();
+    }
+  });
+
+  /* ==========================================================================
+     10. DESKTOP COMPANION CONTROLS
+     ========================================================================== */
+  const compWindow = document.getElementById('compWindow');
+  const compStatusTitle = document.getElementById('compStatusTitle');
+  document.querySelectorAll('.state-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const st = dot.dataset.cstate;
+      compWindow.dataset.state = st;
+      compStatusTitle.textContent = st === 'synced' ? 'Synced' : st === 'syncing' ? 'Syncing' : 'Offline';
+      document.querySelectorAll('.state-dot').forEach(d => d.setAttribute('aria-selected', String(d === dot)));
+    });
+  });
+
+  document.querySelectorAll('.switch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      const next = sw.getAttribute('aria-checked') !== 'true';
+      sw.setAttribute('aria-checked', String(next));
+    });
+  });
+
+  document.getElementById('compFolderBtn').addEventListener('click', () => {
+    modeBtns[0].dispatchEvent(new PointerEvent('pointerdown'));
+  });
+
+  /* ==========================================================================
+     11. ATELIER SWATCH COPY & INTERACTIVE SPRING/RUBBERBAND DISH
+     ========================================================================== */
+  document.querySelectorAll('.ceramic-swatch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      const hex = sw.dataset.hex;
+      navigator.clipboard?.writeText(hex).catch(() => {});
+      const label = sw.querySelector('.swatch-hex');
+      const prev = label.textContent;
+      label.textContent = 'Copied';
+      setTimeout(() => { label.textContent = prev; }, 900);
+    });
+  });
+
+  const dish = document.getElementById('physicsDish');
+  const puck = document.getElementById('springPuck');
+  const puckX = new Spring(0.76, 0.42);
+  const puckY = new Spring(0.76, 0.42);
+  let puckRAF = 0;
+  let dishReady = false;
+
+  function initPhysicsDish() {
+    if (dishReady) return;
+    dishReady = true;
+    let dragging = false;
+    let grabOffsetX = 0;
+    let grabOffsetY = 0;
+    let samples = [];
+
+    const runPuckSpring = () => {
+      cancelAnimationFrame(puckRAF);
+      let last = performance.now();
+      const frame = now => {
+        const dt = (now - last) / 1000;
+        last = now;
+        const mx = puckX.step(dt);
+        const my = puckY.step(dt);
+        puck.style.transform = `translate3d(${puckX.pos}px, ${puckY.pos}px, 0)`;
+        if (mx || my) puckRAF = requestAnimationFrame(frame);
+      };
+      puckRAF = requestAnimationFrame(frame);
+    };
+
+    puck.addEventListener('pointerdown', e => {
+      dragging = true;
+      cancelAnimationFrame(puckRAF);
+      puck.setPointerCapture(e.pointerId);
+      grabOffsetX = e.clientX - puckX.pos;
+      grabOffsetY = e.clientY - puckY.pos;
+      samples = [{ x: puckX.pos, y: puckY.pos, t: performance.now() }];
+    });
+
+    puck.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const rect = dish.getBoundingClientRect();
+      const maxX = Math.max(40, rect.width / 2 - 54);
+      const maxY = Math.max(28, rect.height / 2 - 54);
+      const rawX = e.clientX - grabOffsetX;
+      const rawY = e.clientY - grabOffsetY;
+
+      const rx = Math.abs(rawX) > maxX
+        ? Math.sign(rawX) * (maxX + rubberband(Math.abs(rawX) - maxX, maxX, 0.55))
+        : rawX;
+      const ry = Math.abs(rawY) > maxY
+        ? Math.sign(rawY) * (maxY + rubberband(Math.abs(rawY) - maxY, maxY, 0.55))
+        : rawY;
+
+      puckX.pos = rx;
+      puckY.pos = ry;
+      puck.style.transform = `translate3d(${rx}px, ${ry}px, 0) scale(1.05)`;
+
+      const now = performance.now();
+      samples.push({ x: rx, y: ry, t: now });
+      samples = samples.filter(s => now - s.t <= 90);
+    });
+
+    const release = () => {
+      if (!dragging) return;
+      dragging = false;
+      const now = performance.now();
+      const first = samples[0] || { x: puckX.pos, y: puckY.pos, t: now - 16 };
+      const dtMs = Math.max(12, now - first.t);
+      const vx = ((puckX.pos - first.x) / dtMs) * 1000;
+      const vy = ((puckY.pos - first.y) / dtMs) * 1000;
+
+      puckX.vel = reducedMotion ? 0 : vx;
+      puckY.vel = reducedMotion ? 0 : vy;
+
+      const rect = dish.getBoundingClientRect();
+      const span = Math.max(60, rect.width * 0.28);
+      const wells = [-span, 0, span];
+      const projectedX = puckX.pos + project(vx, 0.996);
+      let nearest = wells[0];
+      for (const w of wells) {
+        if (Math.abs(w - projectedX) < Math.abs(nearest - projectedX)) nearest = w;
+      }
+      puckX.target = nearest;
+      puckY.target = 0;
+
+      if (reducedMotion) {
+        puckX.snap(nearest);
+        puckY.snap(0);
+        puck.style.transform = `translate3d(${nearest}px, 0, 0)`;
+      } else {
+        runPuckSpring();
+      }
+    };
+
+    puck.addEventListener('pointerup', release);
+    puck.addEventListener('pointercancel', release);
+  }
+
+  /* Initial mount */
+  renderDrive();
+  requestAnimationFrame(() => {
+    syncModePill(true);
+    syncNavPill(true);
+  });
+  window.addEventListener('resize', () => {
+    syncModePill(true);
+    syncNavPill(true);
+  });
+})();
+</script>
+</body>
+</html>

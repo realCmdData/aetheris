@@ -1,0 +1,52 @@
+/* The Windows app window: the web UI's tokens on a seashell page (the window's title bar is painted the same
+   colour, client-win/AppWindow.cs), with the porcelain plinth and white cards resting on it. */
+@import '../app.css';
+
+:root {
+  --bg: light-dark(var(--seashell), var(--obsidian));
+  --stage: linear-gradient(155deg, light-dark(#fff, #2a2a32) 0%, light-dark(#fcf9f7, #25252c) 60%, light-dark(#f9f2ee, #222229) 100%);
+  --card-hover: light-dark(#fffaf8, #2e2e37);
+}
+
+html { overflow-y: auto; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: var(--separator-strong) transparent; }
+body { user-select: none; cursor: default; }
+input { user-select: text; }
+
+/* Section headings above grouped rows */
+h2 { font: 400 .78rem/1.2 var(--font); color: var(--text-3); margin: 1.75rem .35rem .55rem; letter-spacing: 0; }
+
+/* Grouped rows on one white card, hairlines inset past the icon */
+.group { margin-top: .9rem; background: var(--card); border-radius: 18px; border: 1px solid var(--separator); box-shadow: var(--shadow-object); overflow: hidden; }
+h2 + .group { margin-top: 0; }
+.row {
+  position: relative; display: flex; align-items: center; gap: .85rem; min-height: 3.25rem; padding: .6rem 1rem; margin: 0;
+  width: 100%; border: 0; background: transparent; text-align: left; color: var(--text);
+}
+.row + .row::before { content: ''; position: absolute; top: 0; left: 2.85rem; right: 0; height: 1px; background: var(--separator); }
+.row > svg { flex: none; color: var(--text-3); }
+.what { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .15rem; }
+.title-line { font: var(--type-name); letter-spacing: var(--track-name); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.what .caption { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note { min-height: 0; padding: .8rem 1rem; }
+.link { cursor: pointer; font: var(--type-name); }
+.link:hover { background: var(--card-hover); }
+.link:active { background: var(--hover); } /* answers the press, not the release */
+.danger, .danger svg { color: var(--error) !important; }
+/* A question in place of its row: the words get the whole width, the answers sit under them on the right */
+.confirm { flex-wrap: wrap; justify-content: flex-end; gap: .5rem; padding-top: .8rem; padding-bottom: .8rem; }
+.confirm .what { flex-basis: 100%; }
+.confirm .title-line, .confirm .what .caption { white-space: normal; }
+.confirm .btn { min-height: 2.2rem; }
+.danger-fill { background: var(--error); color: light-dark(#fff, var(--obsidian)); box-shadow: none; }
+
+/* A switch: the knob stretches under the finger, as on iOS; the fill is the brand facet */
+.switch { flex: none; position: relative; width: 2.4rem; height: 1.4rem; border: 0; border-radius: 999px; padding: 0;
+  background: var(--separator-strong); transition: background-color 180ms ease-out; }
+.switch > span { position: absolute; top: .125rem; left: .125rem; width: 1.15rem; height: 1.15rem; border-radius: 999px;
+  background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / .2); transition: transform 240ms var(--ease-out), width 140ms ease-out; }
+.switch[aria-checked='true'] { background: var(--brand-gradient); }
+.switch[aria-checked='true'] > span { transform: translateX(1rem); }
+.switch:active > span { width: 1.4rem; }
+.switch[aria-checked='true']:active > span { transform: translateX(.75rem); }
+.switch:disabled { opacity: .5; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .switch > span { transition: none; } }

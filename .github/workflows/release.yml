@@ -1,0 +1,57 @@
+# Builds the Windows app for a version tag (git tag v1.2.3 && git push origin v1.2.3) and publishes it as
+# AetherisSetup.exe in this repository's releases, where installed copies look for updates (client-win/Update.cs).
+# They read releases without a token, so that only works while the repository is public.
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write # the release; GitHub's own token for this run, no secret to keep
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version from the tag
+        id: version
+        shell: bash
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          [[ "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "tag must look like v1.2.3, got $GITHUB_REF_NAME"; exit 1; }
+          echo "number=$v" >> "$GITHUB_OUTPUT"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+      - name: App window (web/src/desktop → client-win/ui)
+        working-directory: web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build:desktop
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: One self-contained exe
+        run: dotnet publish client-win -c Release -p:Version=${{ steps.version.outputs.number }} -o out --nologo
+
+      - name: Publish the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mv out/Aetheris.exe AetherisSetup.exe
+          sha256sum AetherisSetup.exe
+          gh release create "$GITHUB_REF_NAME" AetherisSetup.exe \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Aetheris ${{ steps.version.outputs.number }}" \
+            --notes "Aetheris for Windows ${{ steps.version.outputs.number }}. Run AetherisSetup.exe to install (per user, no admin rights); installed copies update themselves."

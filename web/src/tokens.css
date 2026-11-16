@@ -1,0 +1,141 @@
+/* Aetheris design tokens: "Quiet Sculpture" (docs/design-language.md, PLAN.md › Design system).
+   Every role is light-dark(Porcelain, Obsidian); `color-scheme` picks the side (OS default, data-theme overrides).
+   Text contrast is measured against the surface it sits on, and every text role passes WCAG AA. */
+
+/* Lexend (OFL, ./fonts/OFL.txt), self-hosted latin + latin-ext subsets. */
+@font-face { font-family: 'Aetheris Sans'; font-weight: 300; font-display: swap; src: local('Lexend Light'), local('Lexend-Light'), url(./fonts/lexend-latin-300-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Aetheris Sans'; font-weight: 300; font-display: swap; src: url(./fonts/lexend-latin-ext-300-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Aetheris Sans'; font-weight: 400; font-display: swap; src: local('Lexend Regular'), local('Lexend-Regular'), url(./fonts/lexend-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Aetheris Sans'; font-weight: 400; font-display: swap; src: url(./fonts/lexend-latin-ext-400-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Aetheris Sans'; font-weight: 500; font-display: swap; src: local('Lexend Medium'), local('Lexend-Medium'), url(./fonts/lexend-latin-500-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Aetheris Sans'; font-weight: 500; font-display: swap; src: url(./fonts/lexend-latin-ext-500-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+/* Canela Deck is commercial (Commercial Type) and only installed here as a trial, so it is never shipped:
+   local() picks it up where it is installed, everyone else gets the serif fallbacks in --font-display.
+   shortcut: other devices show Sitka / New York / Georgia; drop a licensed woff2 next to Lexend to fix that. */
+@font-face { font-family: 'Aetheris Display'; font-weight: 300; src: local('CanelaDeck-Light'), local('Canela Deck Light'), local('CanelaDeckTrial-Light'); }
+
+:root {
+  color-scheme: light dark;
+
+  /* palette */
+  --coral: #e54b4b;
+  --coral-strong: #c93a3a;
+  --apricot: #ffa987;
+  --seashell: #f7ebe8;
+  --graphite: #444140;
+  --obsidian: #1e1e24;
+  --brand-gradient: linear-gradient(140deg, #e54b4b 0%, #f37564 55%, #ffa987 100%);
+
+  /* surfaces: a seashell surround frames a porcelain stage; objects sit on white cards */
+  --bg: light-dark(var(--seashell), #131317);
+  --ambient: linear-gradient(180deg, light-dark(#faf1ee, #131317), light-dark(#f5e6e1, #17161b));
+  --stage: linear-gradient(155deg, light-dark(#fff, #222229) 0%, light-dark(#fcf9f7, #1e1e24) 60%, light-dark(#f9f2ee, #1a1a20) 100%);
+  --stage-solid: light-dark(#fcf9f7, #1e1e24);
+  --card: light-dark(#fff, #272730);
+  --card-subtle: light-dark(rgb(247 235 232 / 0.52), rgb(255 255 255 / 0.035));
+  --hover: light-dark(rgb(30 30 36 / 0.06), rgb(247 235 232 / 0.08));       /* Material state layer */
+  --selection: var(--container);
+
+  /* Drive-style web shell (2026-11-10): a warm frame holds the top bar and sidebar, one white surface holds
+     the content, tonal containers mark what's active. Captions on --container use --text-2 in dark (3.98:1 otherwise). */
+  --frame: light-dark(#fbf6f4, #131317);
+  --surface: light-dark(#fff, #1e1e24);
+  --surface-2: light-dark(#f6efec, #27272f);                         /* folder/file cards, chips, search */
+  --surface-3: light-dark(#efe5e1, #30303a);                         /* search on hover */
+  --container: light-dark(#fde3dd, #47302d);                         /* active nav item, selected objects */
+  --outline: light-dark(#cbbdb9, #5b5459);
+  --inverse: light-dark(#2f2d32, #ece4e1);                           /* snackbar */
+  --on-inverse: light-dark(#f6efed, #2a282d);                        /* 12.0 / 11.6 */
+  --inverse-accent: light-dark(#ffb4a8, #b83333);                    /* 8.0 / 4.7 */
+  --shadow-1: 0 1px 2px light-dark(rgb(30 30 36 / .22), rgb(0 0 0 / .5)), 0 1px 3px 1px light-dark(rgb(30 30 36 / .1), rgb(0 0 0 / .3));
+  --shadow-2: 0 1px 2px light-dark(rgb(30 30 36 / .22), rgb(0 0 0 / .5)), 0 2px 6px 2px light-dark(rgb(30 30 36 / .12), rgb(0 0 0 / .3));
+  --shadow-3: 0 4px 8px 3px light-dark(rgb(30 30 36 / .12), rgb(0 0 0 / .35)), 0 1px 3px light-dark(rgb(30 30 36 / .22), rgb(0 0 0 / .5));
+
+  /* file-type tones, as Drive colours its icons: media and PDF in the brand coral, documents blue, sheets green,
+     slides amber, folders and the rest neutral. Icons only (≥ 3:1 on every surface they sit on). */
+  --tone-red: light-dark(#d93a36, #ff8a80);
+  --tone-blue: light-dark(#3b6fd4, #8ab4f8);
+  --tone-green: light-dark(#1b8a55, #6dd5a0);
+  --tone-amber: light-dark(#b57400, #fdd663);
+  --tone-folder: light-dark(#5e5654, #c8bfbc);
+  --tone-gray: light-dark(#7a7270, #a39b99);
+  --text-selection: light-dark(rgb(255 169 135 / 0.38), rgb(255 169 135 / 0.3));
+  --separator: light-dark(rgb(68 65 64 / 0.085), rgb(247 235 232 / 0.08));
+  --separator-strong: light-dark(rgb(68 65 64 / 0.15), rgb(247 235 232 / 0.16));
+
+  /* ink */
+  --text: light-dark(var(--obsidian), var(--seashell));             /* 16.0 / 14.2 */
+  --text-2: light-dark(var(--graphite), #c8bfbc);                    /* 9.7 / 8.2 */
+  --text-3: light-dark(#6e6664, #9a9290);                            /* ≥ 4.7 on stage, card and seashell */
+  --accent: light-dark(var(--coral), var(--apricot));                /* icons, focus ring, large text: 3.7 / 8.9 */
+  --accent-text: light-dark(#b83333, var(--apricot));                /* small accent text: 5.6 / 8.9 */
+  --accent-fill: light-dark(var(--coral-strong), var(--apricot));
+  --on-accent: light-dark(#fff, var(--obsidian));                    /* label on --accent-fill: 5.1 / 8.9 */
+  --error: light-dark(#b42318, #f97066);                             /* 6.6 / 5.3, always with icon + text */
+
+  /* glass: floating capsules and popovers. Never stacked on each other. */
+  --glass: light-dark(rgb(255 253 252 / 0.74), rgb(34 34 42 / 0.76));
+  --glass-pill: light-dark(rgb(255 255 255 / 0.82), rgb(42 42 52 / 0.86));
+  --glass-border: light-dark(rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.11));
+  --material-blur: blur(22px) saturate(160%);
+
+  /* object visuals (lib/Visual.svelte) */
+  --pocket-top: light-dark(rgb(255 255 255 / 0.84), rgb(255 255 255 / 0.2));
+  --pocket-bottom: light-dark(rgb(234 230 229 / 0.62), rgb(255 255 255 / 0.07));
+  --pocket-edge: light-dark(rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.22));
+
+  --shadow-stage: 0 30px 70px -20px light-dark(rgb(45 34 32 / 0.09), rgb(0 0 0 / 0.55)),
+    0 10px 26px -10px light-dark(rgb(229 75 75 / 0.05), transparent), inset 0 1px 0 light-dark(rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.08));
+  --shadow-object: 0 10px 24px -10px light-dark(rgb(45 34 32 / 0.09), rgb(0 0 0 / 0.48)), 0 2px 6px light-dark(rgb(45 34 32 / 0.04), rgb(0 0 0 / 0.28));
+  --shadow-lifted: 0 24px 48px -12px light-dark(rgb(30 30 36 / 0.16), rgb(0 0 0 / 0.65)), 0 8px 20px -6px light-dark(rgb(229 75 75 / 0.14), rgb(229 75 75 / 0.22));
+  --shadow-popover: 0 22px 54px -12px light-dark(rgb(30 30 36 / 0.18), rgb(0 0 0 / 0.68)), 0 4px 14px light-dark(rgb(30 30 36 / 0.06), rgb(0 0 0 / 0.35));
+
+  /* type: one sculptural display face for titles, Lexend for everything else. Tracking tightens as size grows. */
+  --font: 'Aetheris Sans', 'Lexend', system-ui, -apple-system, 'Segoe UI Variable Text', sans-serif;
+  --font-display: 'Aetheris Display', 'Sitka Display', ui-serif, Georgia, serif;
+  --type-large-title: 300 2.35rem/1.05 var(--font-display);
+  --type-title: 300 1.6rem/1.15 var(--font-display);
+  --type-body: 300 0.9375rem/1.5 var(--font);
+  --type-name: 400 0.875rem/1.35 var(--font);
+  --type-callout: 300 0.875rem/1.45 var(--font);
+  --type-caption: 300 0.78rem/1.35 var(--font);
+  --track-display: -0.015em;
+  --track-name: -0.011em;
+
+  /* shape */
+  --radius-s: 0.5rem;
+  --radius-m: 0.8rem;
+  --radius-l: 1.25rem;
+  --radius-stage: 26px;
+
+  /* motion: springs live in JS (lib/spring.ts: damping 1.0 by default, 0.8 only after a flick).
+     CSS only handles press feedback and reduced-motion cross-fades. */
+  --press-scale: 0.97;
+  --press-duration: 100ms;
+  --fade-duration: 180ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+@media (prefers-reduced-transparency: reduce) {
+  :root { --glass: var(--card); --glass-pill: var(--card); --material-blur: none; }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --glass: var(--card); --glass-pill: var(--card); --material-blur: none;
+    --text-2: var(--text); --text-3: var(--text);
+    --separator: light-dark(rgb(30 30 36 / 0.5), rgb(247 235 232 / 0.5));
+    --separator-strong: var(--separator);
+    --glass-border: var(--separator);
+  }
+}

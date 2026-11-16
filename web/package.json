@@ -1,0 +1,1 @@
+{"name":"aetheris-web","private":true,"type":"module","scripts":{"dev":"vite","build":"vite build","dev:desktop":"vite --config vite.desktop.config.ts","build:desktop":"vite build --config vite.desktop.config.ts"},"devDependencies":{"@material-symbols/svg-400":"0.48.3","@sveltejs/vite-plugin-svelte":"^7.3.1","svelte":"^5.57.3","typescript":"^7.0.2","vite":"^8.3.5"}}

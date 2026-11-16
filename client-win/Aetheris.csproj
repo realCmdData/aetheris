@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- A tray app: no console window. pair/unregister attach to the calling terminal. -->
+    <OutputType>WinExe</OutputType>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- The tray structs (NOTIFYICONDATA) are packed per architecture -->
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- 19041 = Windows 10 2004: the Cloud Files API and StorageProvider registration we rely on -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>Aetheris</AssemblyName>
+    <RootNamespace>Aetheris</RootNamespace>
+    <ApplicationIcon>..\assets\brand\icons\aetheris.ico</ApplicationIcon>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <!-- Releases set it from their tag (-p:Version=1.2.3, .github/workflows/release.yml). 0.0.0 = a local build,
+         which never updates itself. -->
+    <Version>0.0.0</Version>
+  </PropertyGroup>
+
+  <!-- A release is one exe for any Windows PC: the .NET runtime inside, and the files it unpacks when it installs
+       itself (Setup.cs). Build the app window first: pnpm build:desktop in web/. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> <!-- WebView2Loader.dll -->
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <EmbeddedResource Include="ui\**" LogicalName="ui\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="package\**" LogicalName="package\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="uninstall.ps1" LogicalName="uninstall.ps1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.367">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- WebView2 is used through its Core API in a plain Win32 window: drop the WPF and WinForms wrappers the package adds. -->
+  <Target Name="DropWebView2Wrappers" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.WinForms' Or '%(Filename)' == 'Microsoft.Web.WebView2.Wpf'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Debug builds are the dev client: without the package identity, which belongs to the installed copy only
+       (with it, a build folder's exe acted as the installed app, and its file writes went astray). -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <ApplicationManifest>$(BaseIntermediateOutputPath)dev.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <Target Name="DevManifest" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)' == 'Debug'">
+    <ReadLinesFromFile File="app.manifest">
+      <Output TaskParameter="Lines" ItemName="ManifestLine" />
+    </ReadLinesFromFile>
+    <ItemGroup>
+      <ManifestLine Remove="@(ManifestLine)" Condition="$([System.String]::Copy('%(Identity)').Contains('&lt;msix '))" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(ApplicationManifest)" Lines="@(ManifestLine)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
+
+  <!-- The app window's interface (built from web/ with `pnpm build:desktop`), next to the exe, and the uninstaller
+       that Installed apps runs. -->
+  <ItemGroup>
+    <None Include="ui\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="uninstall.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+</Project>

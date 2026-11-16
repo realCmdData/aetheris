@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 720" width="100%" height="100%">
+      <defs>
+        <!-- Apple-Style House Warm Gradient (Palette: #E54B4B to #FFA987) -->
+        <linearGradient id="aetheris-house-grad" x1="12%" y1="88%" x2="88%" y2="15%">
+          <stop offset="0%" stop-color="#D9383A"/>
+          <stop offset="38%" stop-color="#E54B4B"/>
+          <stop offset="78%" stop-color="#F77B55"/>
+          <stop offset="100%" stop-color="#FFA987"/>
+        </linearGradient>
+
+        <!-- Inner House Glass Highlight -->
+        <linearGradient id="aetheris-house-shine" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.38"/>
+          <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0.08"/>
+          <stop offset="100%" stop-color="#D9383A" stop-opacity="0.15"/>
+        </linearGradient>
+
+        <!-- Cloud Metallic Rim Outer Gradient -->
+        <linearGradient id="cloud-metal-outer" x1="25%" y1="0%" x2="75%" y2="100%">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="28%" stop-color="#E6E7EB"/>
+          <stop offset="65%" stop-color="#A7AAB2"/>
+          <stop offset="100%" stop-color="#767982"/>
+        </linearGradient>
+
+        <!-- Cloud Metallic Rim Inner Bevel -->
+        <linearGradient id="cloud-metal-inner" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stop-color="#8C8F96"/>
+          <stop offset="22%" stop-color="#F5F6F8"/>
+          <stop offset="55%" stop-color="#B8BBC2"/>
+          <stop offset="100%" stop-color="#6E7078"/>
+        </linearGradient>
+
+        <!-- Under-Arch Ribbon (Translucent Glass Blending with House) -->
+        <linearGradient id="infinity-under-body" x1="18%" y1="20%" x2="82%" y2="85%">
+          <stop offset="0%" stop-color="#9A9DA6" stop-opacity="0.95"/>
+          <stop offset="16%" stop-color="#E8EAEF" stop-opacity="0.92"/>
+          <stop offset="35%" stop-color="#F4D3C8" stop-opacity="0.41"/>
+          <stop offset="50%" stop-color="#FF9B73" stop-opacity="0.23"/>
+          <stop offset="66%" stop-color="#F2CFC2" stop-opacity="0.41"/>
+          <stop offset="84%" stop-color="#C8CBD2" stop-opacity="0.92"/>
+          <stop offset="100%" stop-color="#7E818A" stop-opacity="0.96"/>
+        </linearGradient>
+
+        <!-- Under-Arch Specular Bevel -->
+        <linearGradient id="infinity-under-bevel" x1="15%" y1="15%" x2="85%" y2="85%">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+          <stop offset="32%" stop-color="#FFFFFF" stop-opacity="0.7"/>
+          <stop offset="50%" stop-color="#FFD2BE" stop-opacity="0.45"/>
+          <stop offset="68%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+          <stop offset="100%" stop-color="#9B9EA6" stop-opacity="0.9"/>
+        </linearGradient>
+
+        <!-- Over-Arch Ribbon (Brushed Anodized Aluminum + Warm Core Blend) -->
+        <linearGradient id="infinity-over-body" x1="12%" y1="78%" x2="88%" y2="22%">
+          <stop offset="0%" stop-color="#8E9199"/>
+          <stop offset="18%" stop-color="#CFD2D9"/>
+          <stop offset="36%" stop-color="#F5E6E1" stop-opacity="0.92"/>
+          <stop offset="50%" stop-color="#F4C1B2" stop-opacity="0.62"/>
+          <stop offset="64%" stop-color="#F7F8FA" stop-opacity="0.95"/>
+          <stop offset="82%" stop-color="#FFFFFF"/>
+          <stop offset="94%" stop-color="#B0B3BC"/>
+          <stop offset="100%" stop-color="#7A7D85"/>
+        </linearGradient>
+
+        <!-- Over-Arch Inner 3D Facet Shadow -->
+        <linearGradient id="infinity-over-facet" x1="15%" y1="85%" x2="85%" y2="15%">
+          <stop offset="0%" stop-color="#686B73"/>
+          <stop offset="28%" stop-color="#AEB1BA"/>
+          <stop offset="50%" stop-color="#D97F6C" stop-opacity="0.68"/>
+          <stop offset="72%" stop-color="#D5D7DE"/>
+          <stop offset="90%" stop-color="#878A92"/>
+          <stop offset="100%" stop-color="#5E6168"/>
+        </linearGradient>
+
+        <!-- Center House Glow Bleed Filter -->
+        <radialGradient id="house-center-bleed" cx="50%" cy="54%" r="26%">
+          <stop offset="0%" stop-color="#FF6B4A" stop-opacity="0.52"/>
+          <stop offset="55%" stop-color="#E54B4B" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#E54B4B" stop-opacity="0"/>
+        </radialGradient>
+
+        <!-- Drop Shadows (Apple multi-layered soft elevation) -->
+        <filter id="house-elevation" x="-20%" y="-20%" width="140%" height="150%">
+          <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#E54B4B" flood-opacity="0.32"/>
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#1E1E24" flood-opacity="0.12"/>
+        </filter>
+
+        <filter id="ribbon-elevation" x="-20%" y="-20%" width="140%" height="150%">
+          <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#1E1E24" flood-opacity="0.24"/>
+          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#1E1E24" flood-opacity="0.14"/>
+        </filter>
+
+        <filter id="over-strap-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#4A1C17" flood-opacity="0.28"/>
+        </filter>
+      </defs>
+
+      <!-- LAYER 1: UPPER CLOUD METALLIC ARCH -->
+      <g filter="url(#ribbon-elevation)">
+        <!-- Outer Cloud Bevel -->
+        <path d="M 192 315&#10;                 C 188 232, 248 182, 316 184&#10;                 C 338 124, 462 124, 484 184&#10;                 C 552 182, 612 232, 608 315" fill="none" stroke="url(#cloud-metal-outer)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Inner Cloud Bevel Ridge -->
+        <path d="M 192 315&#10;                 C 188 232, 248 182, 316 184&#10;                 C 338 124, 462 124, 484 184&#10;                 C 552 182, 612 232, 608 315" fill="none" stroke="url(#cloud-metal-inner)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Specular Top Highlight -->
+        <path d="M 198 295&#10;                 C 198 234, 250 189, 316 190&#10;                 C 340 131, 460 131, 484 190&#10;                 C 550 189, 602 234, 602 295" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+      </g>
+
+      <!-- LAYER 2: WARM HOME ICON (ROUNDED APPLE GEOMETRY) -->
+      <g filter="url(#house-elevation)">
+        <!-- Main House Silhouette -->
+        <path d="M 388 186&#10;                 Q 400 174 412 186&#10;                 L 556 326&#10;                 Q 568 338 551 338&#10;                 L 516 338&#10;                 L 516 448&#10;                 Q 516 466 498 466&#10;                 L 302 466&#10;                 Q 284 466 284 448&#10;                 L 284 338&#10;                 L 249 338&#10;                 Q 232 338 244 326&#10;                 Z" fill="url(#aetheris-house-grad)"/>
+
+        <!-- Subtle Diagonal Facet Fold (Matches Original Lighting) -->
+        <path d="M 400 177&#10;                 L 556 326&#10;                 Q 568 338 551 338&#10;                 L 516 338&#10;                 L 516 448&#10;                 Q 516 466 498 466&#10;                 L 400 466&#10;                 Z" fill="#FFA987" opacity="0.14"/>
+
+        <!-- Crisp Inner Glass Rim Border -->
+        <path d="M 388 186&#10;                 Q 400 174 412 186&#10;                 L 556 326&#10;                 Q 568 338 551 338&#10;                 L 516 338&#10;                 L 516 448&#10;                 Q 516 466 498 466&#10;                 L 302 466&#10;                 Q 284 466 284 448&#10;                 L 284 338&#10;                 L 249 338&#10;                 Q 232 338 244 326&#10;                 Z" fill="url(#aetheris-house-shine)" stroke="#FFFFFF" stroke-width="2" stroke-opacity="0.35"/>
+      </g>
+
+      <!-- LAYER 3: INFINITY UNDER-PASS RIBBON (Top-Left to Bottom-Right, Semi-Translucent) -->
+      <g filter="url(#ribbon-elevation)">
+        <!-- Soft dark shadow cast onto the house by the infinity loop -->
+        <path d="M 278 250&#10;                 C 355 268, 445 388, 525 398" fill="none" stroke="#8F251E" stroke-width="46" stroke-linecap="round" opacity="0.26"/>
+
+        <!-- Main Under-Arch Translucent Metallic Band -->
+        <path d="M 185 335&#10;                 C 162 246, 265 212, 344 278&#10;                 L 456 368&#10;                 C 535 434, 638 396, 615 305" fill="none" stroke="url(#infinity-under-body)" stroke-width="42" stroke-linecap="round"/>
+
+        <!-- 3D Inner Chiseled Ridge on Under-Arch -->
+        <path d="M 185 335&#10;                 C 162 246, 265 212, 344 278&#10;                 L 456 368&#10;                 C 535 434, 638 396, 615 305" fill="none" stroke="url(#infinity-under-bevel)" stroke-width="20" stroke-linecap="round"/>
+
+        <!-- Upper Edge Glass Catchlight -->
+        <path d="M 182 322&#10;                 C 166 244, 265 206, 348 272&#10;                 L 460 362&#10;                 C 535 424, 628 390, 616 306" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.65"/>
+      </g>
+
+      <!-- LAYER 4: INFINITY OVER-PASS RIBBON (Bottom-Left to Top-Right, Twisted 3D Mobius) -->
+      <g filter="url(#over-strap-shadow)">
+        <!-- Outer Extruded Metallic Band -->
+        <path d="M 185 305&#10;                 C 162 396, 265 434, 344 368&#10;                 L 456 278&#10;                 C 535 212, 638 246, 615 335&#10;                 C 602 384, 560 404, 515 394" fill="none" stroke="url(#infinity-over-body)" stroke-width="42" stroke-linecap="round"/>
+
+        <!-- Lower Chiseled 3D Facet for Mobius Depth -->
+        <path d="M 188 314&#10;                 C 170 398, 268 434, 348 372&#10;                 L 460 282&#10;                 C 536 220, 630 252, 612 335" fill="none" stroke="url(#infinity-over-facet)" stroke-width="18" stroke-linecap="round"/>
+
+        <!-- Crisp White Specular Crest along the Mobius Twist -->
+        <path d="M 184 298&#10;                 C 162 386, 262 424, 340 362&#10;                 L 452 272&#10;                 C 532 206, 634 242, 615 330" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" opacity="0.92"/>
+      </g>
+
+      <!-- LAYER 5: SUBTLE WARM HOUSE COLOR BLEED AT CROSSING INTERSECTION -->
+      <circle cx="400" cy="323" r="95" fill="url(#house-center-bleed)" style="mix-blend-mode: overlay;" pointer-events="none"/>
+
+      <!-- LAYER 6: BRAND TYPOGRAPHY ("Aetheris" in Apple SF-Style Precision Geometry) -->
+      <g class="brand-wordmark" fill="#1E1E24">
+        <text x="400" y="618" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif" font-size="122" font-weight="500" letter-spacing="-3.2" fill="#1E1E24">Aetheris</text>
+      </g>
+    </svg>

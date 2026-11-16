@@ -1,0 +1,116 @@
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font: var(--type-body);
+  letter-spacing: var(--track-name);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+}
+button, input, select { font: inherit; color: inherit; letter-spacing: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-s); }
+::selection { background: var(--text-selection); }
+
+/* One quiet voice per screen: titles in the display face, everything else in Lexend */
+.large-title { font: var(--type-large-title); letter-spacing: var(--track-display); margin: 0; }
+.title { font: var(--type-title); letter-spacing: var(--track-display); margin: 0; }
+.caption { font: var(--type-caption); letter-spacing: 0; color: var(--text-3); }
+.callout { font: var(--type-callout); letter-spacing: 0; color: var(--text-3); }
+.num { font-variant-numeric: tabular-nums; }
+.error { color: var(--error); display: flex; gap: .4rem; align-items: center; font: var(--type-callout); }
+
+/* Feedback on press, not on release */
+.btn, .icon-btn, .circle-btn {
+  transition: transform var(--press-duration) ease-out, background-color 150ms ease-out, color 150ms ease-out, box-shadow 180ms ease-out;
+}
+.btn:active:not(:disabled), .circle-btn:active:not(:disabled) { transform: scale(var(--press-scale)); }
+.icon-btn:active:not(:disabled) { transform: scale(.92); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+  min-height: 2.6rem; padding: 0 1.15rem; border: 0; border-radius: var(--radius-m);
+  font: 400 .875rem/1 var(--font); background: var(--accent-fill); color: var(--on-accent);
+  box-shadow: 0 10px 22px -10px light-dark(rgb(229 75 75 / .55), rgb(255 169 135 / .35)), inset 0 1px 0 rgb(255 255 255 / .28);
+}
+/* A plain object button: a white card with a hairline (secondary actions) */
+.btn.plain {
+  background: var(--card); color: var(--text); border: 1px solid var(--separator-strong);
+  box-shadow: 0 3px 10px light-dark(rgb(30 30 36 / .05), rgb(0 0 0 / .2));
+}
+.btn.plain:hover:not(:disabled) { box-shadow: 0 6px 16px light-dark(rgb(30 30 36 / .08), rgb(0 0 0 / .3)); }
+.btn.quiet { background: transparent; color: var(--text); box-shadow: none; }
+.btn.quiet:hover:not(:disabled) { background: var(--hover); }
+.btn.danger { background: transparent; color: var(--error); box-shadow: none; }
+.btn.danger:hover:not(:disabled) { background: var(--hover); }
+.btn:disabled { opacity: .45; cursor: default; }
+
+/* Icon-only chrome: a bare circle that lights on hover */
+.icon-btn {
+  display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; padding: 0; flex: none;
+  border: 0; border-radius: 50%; background: transparent; color: var(--text-2); text-decoration: none;
+}
+.icon-btn:hover { background: var(--hover); color: var(--text); }
+.icon-btn[aria-pressed='true'] { background: var(--selection); color: var(--accent); }
+
+/* An object-level action: a raised porcelain circle (Inspector, Quick Look) */
+.circle-btn {
+  display: inline-grid; place-items: center; width: 2.4rem; height: 2.4rem; padding: 0; flex: none;
+  border-radius: 50%; border: 1px solid var(--separator-strong); background: var(--card); color: var(--text-2);
+  box-shadow: 0 2px 8px light-dark(rgb(30 30 36 / .05), rgb(0 0 0 / .25)); text-decoration: none;
+}
+.circle-btn:hover { color: var(--text); }
+.circle-btn.danger:hover { color: var(--error); }
+.circle-btn:disabled { opacity: .45; cursor: default; }
+
+.field {
+  width: 100%; min-height: 2.25rem; padding: 0 .75rem; border-radius: var(--radius-s);
+  border: 1px solid var(--separator-strong); background: var(--card); font: var(--type-name);
+}
+.field:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+/* Materials: glass floats over content; the porcelain card is the solid modal surface */
+.glass {
+  background: var(--glass-pill); backdrop-filter: var(--material-blur); -webkit-backdrop-filter: var(--material-blur);
+  border: 1px solid var(--glass-border); box-shadow: var(--shadow-popover), 0 0 0 1px var(--separator);
+}
+.card {
+  background: var(--stage); border: 1px solid var(--glass-border); border-radius: 28px;
+  box-shadow: var(--shadow-lifted), 0 0 0 1px var(--separator);
+}
+
+/* Popover menu: grows from its trigger (set transform-origin inline) */
+.menu {
+  position: fixed; z-index: 30; min-width: 11.5rem; padding: 6px; border-radius: 16px;
+  display: grid; gap: 2px; animation: bloom 200ms var(--ease-out);
+}
+.menu button {
+  display: flex; align-items: center; gap: .65rem; height: 2.25rem; padding: 0 .75rem; border: 0; border-radius: 10px;
+  background: none; text-align: left; font: 400 .83rem/1 var(--font); color: var(--text);
+}
+.menu button:hover { background: var(--hover); }
+.menu button svg { opacity: .8; }
+.menu .danger { color: var(--error); }
+@keyframes bloom { from { opacity: 0; transform: scale(.92); } }
+
+
+/* Page header: a single display title */
+.page-head { display: flex; align-items: center; gap: 1rem; min-height: 3.25rem; margin: 1.75rem 0 1.6rem; }
+.page-head .large-title { flex: 1; min-width: 0; }
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .page-head { margin: 1.1rem 0 1rem; }
+  .large-title { font-size: 1.95rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: var(--fade-duration) !important; animation: none !important; }
+  .btn:active, .icon-btn:active, .circle-btn:active { transform: none !important; }
+}

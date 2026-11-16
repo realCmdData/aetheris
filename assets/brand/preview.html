@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aetheris brand sheet</title>
+<link rel="icon" href="mark.svg">
+<link rel="stylesheet" href="../../web/src/tokens.css">
+<style>
+  body { margin: 0; font: var(--type-body); background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: center; gap: 1rem; padding: 1rem; }
+  header img { height: 5rem; border-radius: var(--radius-m); }
+  h1 { font: var(--type-large-title); letter-spacing: var(--track-large-title); margin: 0; }
+  .panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
+  .panel { padding: 1rem; background: var(--bg); color: var(--text); }
+  .dark { color-scheme: dark; }
+  .light { color-scheme: light; }
+  h2 { font: var(--type-title); letter-spacing: var(--track-title); margin: 1rem 0 0.5rem; }
+  .row { display: flex; align-items: end; gap: 0.75rem; flex-wrap: wrap; }
+  .zoom { width: 96px; image-rendering: pixelated; }
+  .caption { font: var(--type-caption); letter-spacing: var(--track-caption); color: var(--text-2); }
+  .swatch { width: 7.5rem; padding: 0.5rem; border-radius: var(--radius-s); box-shadow: inset 0 0 0 1px var(--separator); }
+  .btn { font: 600 0.9375rem/1 var(--font); padding: 0.6rem 1rem; border: 0; border-radius: var(--radius-m);
+         background: var(--accent-fill); color: var(--on-accent); }
+  .btn:active { transform: scale(var(--press-scale)); transition: transform var(--press-duration) ease-out; }
+  .stage { position: relative; height: 7rem; border-radius: var(--radius-l); overflow: hidden; background: var(--brand-gradient); }
+  .chip { position: absolute; inset: auto 1rem 1rem 1rem; padding: 0.75rem; border-radius: var(--radius-m);
+          background: var(--material-light); backdrop-filter: var(--material-blur); box-shadow: var(--glass-edge), var(--shadow-chip); }
+  a { color: var(--accent-text); }
+  .err { color: var(--error); }
+</style>
+</head>
+<body>
+<header>
+  <img src="logo.svg" alt="Aetheris logo">
+  <div><h1>Aetheris</h1><span class="caption">drive.example.com · brand sheet (tokens from web/src/tokens.css)</span></div>
+</header>
+<div class="panels">
+  <section class="panel light"></section>
+  <section class="panel dark"></section>
+</div>
+<template id="content">
+  <h2>Mark</h2>
+  <div class="row">
+    <img src="icons/icon-16.png" alt=""><img src="icons/icon-32.png" alt=""><img src="icons/icon-48.png" alt="">
+    <img src="mark-small.svg" width="28" alt=""><img src="mark.svg" width="96" alt=""><img src="icons/icon-180.png" width="96" alt="">
+  </div>
+  <div class="row"><img class="zoom" src="icons/icon-16.png" alt=""><img class="zoom" src="icons/icon-32.png" alt=""><span class="caption">16 / 32 px, 6× zoom</span></div>
+  <h2>Type</h2>
+  <div style="font: var(--type-large-title); letter-spacing: var(--track-large-title)">Large title</div>
+  <div style="font: var(--type-title); letter-spacing: var(--track-title)">Title · My Files</div>
+  <div>Body: 1,284 files, 37.2 GB on NAS-01. <a href="#">Open in Explorer</a></div>
+  <div class="caption">Caption · Synced 2 minutes ago</div>
+  <div class="err">⚠ Error text: Couldn't reach the NAS.</div>
+  <h2>Roles</h2>
+  <div class="row">
+    <div class="swatch" style="background: var(--accent)"><span class="caption" style="color: var(--on-accent)">accent</span></div>
+    <div class="swatch" style="background: var(--selection)"><span class="caption">selection</span></div>
+    <button class="btn">Keep on this PC</button>
+  </div>
+  <h2>Material</h2>
+  <div class="stage"><div class="chip">Uploading 3 files · 42 %</div></div>
+</template>
+<script>
+  for (const panel of document.querySelectorAll('.panel'))
+    panel.append(document.getElementById('content').content.cloneNode(true));
+</script>
+</body>
+</html>
