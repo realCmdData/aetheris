@@ -19,6 +19,9 @@ Ground rules:
 - UI work follows the Design system in `PLAN.md` and the `apple-design` skill.
 - `.env` (git-ignored) is the user's. Never print or use its password values.
 
+Diagnosing the Windows app: its live log is `%LOCALAPPDATA%\Aetheris\<profile>\aetheris.log` (`nas`, or `dev`; the previous
+run's is `.old`), and the zips from **Export support log…** land in `%LOCALAPPDATA%\Aetheris\<profile>\support\`.
+
 Reaching the NAS over SSH: send scripts as a heredoc (`ssh … sh -s <<'EOF'`), so PowerShell's CRLF never reaches the
 NAS shell. The NAS has no usable CA store and no `/dev/net/tun`. Go binaries embed fallback roots and use tsnet in
 userspace.

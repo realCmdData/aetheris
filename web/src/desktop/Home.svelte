@@ -1,16 +1,22 @@
 <script lang="ts">
+  import { SvelteSet } from 'svelte/reactivity'
   import Icon from '../lib/Icon.svelte'
   import Logo from '../lib/Logo.svelte'
   import { size } from '../lib/format'
   import { send, type State, type Event } from './bridge'
   import { glide, ago, base, folder } from './glide'
 
-  let { app, freed, onfreed, folderError }: { app: State; freed: number | null; onfreed: () => void; folderError: string | null } = $props()
+  let { app, freed, onfreed, folderError, exported, onexport }: {
+    app: State; freed: number | null; onfreed: () => void; folderError: string | null
+    exported: { path: string | null; error: string | null } | null; onexport: () => void
+  } = $props()
 
   let now = $state(Date.now())
   let freeing = $state(false)
   let confirming = $state(false)
   let stopping = $state<string | null>(null) // the folder whose "Stop syncing" waits for a yes
+  const open = new SvelteSet<string>() // activity entries shown in full
+  let exporting = $state(false)
 
   $effect(() => {
     const t = setInterval(() => (now = Date.now()), 15_000)
@@ -19,6 +25,15 @@
   $effect(() => {
     if (freed !== null) freeing = false
   })
+  $effect(() => {
+    if (exported !== null) exporting = false
+  })
+
+  function exportLog() {
+    exporting = true
+    onexport()
+    send({ type: 'support' })
+  }
 
   // The plinth answers one question: what is the folder doing right now. One title, one hairline, one line of fact.
   const done = $derived(app.transfers.reduce((n, x) => n + x.done, 0))
@@ -183,14 +198,16 @@
   <section class="group">
     {#each app.activity.map(shown) as e (e.at + e.kind + e.path)}
       {@const k = kinds[e.kind] ?? kinds.changed}
-      <div class="row event">
+      {@const key = e.at + e.kind + e.path}
+      <!-- A press shows the whole entry (names and folders cut short with …) and its exact time. -->
+      <button class="row event" aria-expanded={open.has(key)} onclick={() => (open.has(key) ? open.delete(key) : open.add(key))}>
         <span class="glyph {k.tone ?? ''}"><Icon name={k.icon} size={16} /></span>
         <span class="what">
           <span class="title-line">{e.kind === 'free' ? e.path : base(e.path)}</span>
-          <span class="caption">{k.label(e)}{folder(e.path) && e.kind !== 'free' ? ` · ${folder(e.path)}` : ''} · {ago(e.at, now)}</span>
+          <span class="caption">{k.label(e)}{folder(e.path) && e.kind !== 'free' ? ` · ${folder(e.path)}` : ''} · {open.has(key) ? new Date(e.at).toLocaleString() : ago(e.at, now)}</span>
         </span>
         {#if e.size}<span class="caption num">{size(e.size)}</span>{/if}
-      </div>
+      </button>
     {:else}
       <p class="row note caption">Nothing yet. Changes in your folder and on your NAS show up here.</p>
     {/each}
@@ -209,6 +226,15 @@
         <span class="caption">{app.update ? `Updating to ${app.update}…` : app.version === '0.0.0' ? 'Updates come with released versions' : 'Updates install by themselves'}</span>
       </span>
     </div>
+    <button class="row link quiet-link support" onclick={exportLog} disabled={exporting}>
+      <Icon name="description" size={18} />
+      <span class="what">
+        <span class="title-line">{exporting ? 'Exporting…' : 'Export support log…'}</span>
+        <span class="caption">The log, settings and recent activity in one zip. Nothing that signs in.</span>
+      </span>
+    </button>
+    {#if exported?.path}<p class="row note caption saved">Saved as {exported.path}. Explorer shows it.</p>{/if}
+    {#if exported?.error}<p class="row note error" role="alert"><Icon name="alert" size={16} />{exported.error}</p>{/if}
     {#if confirming}
       <div class="row confirm">
         <span class="what"><span class="title-line">Sign this PC out?</span><span class="caption">It stops syncing. Your files on the NAS stay as they are.</span></span>
@@ -247,7 +273,7 @@
   .switches { width: 100%; display: grid; gap: .9rem; padding-top: .35rem; }
   .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font: 300 .84rem/1.3 var(--font); color: var(--text-2); }
 
-  .storage .caption, label.row .caption, label.row .title-line { white-space: normal; } /* facts and settings, not names: let them wrap */
+  .storage .caption, label.row .caption, label.row .title-line, .support .caption { white-space: normal; } /* facts and settings, not names: let them wrap */
 
   .figure { font: var(--type-title); letter-spacing: var(--track-display); }
   .storage { align-items: flex-start; padding-top: .9rem; padding-bottom: .9rem; }
@@ -261,6 +287,10 @@
   .glyph { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; flex: none; background: var(--hover); color: var(--text-3); }
   .glyph.warn { background: light-dark(rgb(180 35 24 / .08), rgb(249 112 102 / .14)); color: var(--error); }
   .event .caption.num { flex: none; }
+  .event { cursor: pointer; }
+  .event:hover { background: var(--card-hover); }
+  .event:active { background: var(--hover); }
+  .event[aria-expanded='true'] .title-line, .event[aria-expanded='true'] .what .caption { white-space: normal; overflow-wrap: anywhere; }
 
   .select {
     flex: none; min-height: 2rem; padding: 0 1.9rem 0 .75rem; border-radius: var(--radius-s); border: 1px solid var(--separator-strong);
@@ -275,6 +305,7 @@
   .row .icon-btn { flex: none; width: 2rem; height: 2rem; }
   .quiet-link { color: var(--text-2); }
   .error.note { gap: .5rem; }
+  .saved { overflow-wrap: anywhere; }
 
   @media (prefers-reduced-motion: reduce) {
     .line.busy > span { animation: none; width: 100%; opacity: .35; } /* no travelling glint, just a quiet line */

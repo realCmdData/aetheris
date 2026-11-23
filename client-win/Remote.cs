@@ -11,6 +11,19 @@ static class Remote
 {
     public const FILE_SHARE_MODE ShareAll = FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE | FILE_SHARE_MODE.FILE_SHARE_DELETE;
 
+    // What this PC has seen of the NAS: every change up to `applied`, except the NAS versions it couldn't take
+    // because a plain file or an unsent edit stood in their place (`skipped`).
+    static long applied;
+    static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> skipped = new(StringComparer.OrdinalIgnoreCase);
+
+    // Whether this PC had this NAS version of the file. An app that saves through a temp file renamed over the
+    // original (Claude Code, many editors and slicers) leaves a plain file where the placeholder was, so the
+    // uploader can't read the version it replaced: if it is the NAS's current one, the save is an edit of it.
+    public static bool Had(string path, long rev) => rev <= Interlocked.Read(ref applied) && !skipped.ContainsKey(path);
+
+    // The file under this name now is one the NAS has (an upload, or the NAS copy put back beside a conflict copy).
+    public static void Settled(string path) => skipped.TryRemove(path, out _);
+
     // The protocol's client loop: the whole tree once, then the changes feed forever. A 410 (index
     // rebuilt) or a restart starts over from the tree. Offline, it retries with backoff up to a minute.
     public static async Task Follow(Nas nas, Profile profile, CancellationToken ct)
@@ -43,6 +56,7 @@ static class Remote
                             profile.SetSynced(f, fresh, cursor);
                         }
                         epoch = fresh; // only now: a reconcile cut short starts over from the tree
+                        Interlocked.Exchange(ref applied, cursor);
                     }
                     finally
                     {
@@ -69,6 +83,7 @@ static class Remote
                 {
                     foreach (var c in page.Changes)
                         Apply(c);
+                    Interlocked.Exchange(ref applied, page.Cursor);
                 }
                 finally
                 {
@@ -187,7 +202,8 @@ static class Remote
             Engine.Notify(deleted == 1 ? $"“{Path.GetFileName(done.First(d => !moved.Exists(m => SyncRoot.Rel(m) == d)))}” was deleted while Aetheris wasn't running, so it went to the NAS trash."
                 : $"{deleted} items deleted while Aetheris wasn't running went to the NAS trash.");
         var existing = SyncRoot.CreatePlaceholders(entries.Where(e => !Under(e.Path, done)), out int created);
-        int updated = existing.Count(TryUpsert);
+        long before = synced is { } had && had.Epoch == epoch ? had.Cursor : 0; // NAS versions this PC had before it stopped
+        int updated = existing.Count(e => TryUpsert(e, before));
         int removed = strays
             .Where(p => !Under(p, moved))
             .OrderByDescending(p => p.Length) // contents before their folder
@@ -229,16 +245,18 @@ static class Remote
         }
     }
 
-    static bool TryUpsert(Entry e)
+    static bool TryUpsert(Entry e, long known)
     {
-        try { return Upsert(e); }
+        try { return Upsert(e, known); }
         catch (Exception x) { Log.Error($"{e.Path}: {x.Message}"); return false; }
     }
 
     // Brings one placeholder to the NAS state. Content that changed is dropped (dehydrated) so the next
     // open downloads the new bytes; a move or a touch only rewrites the identity.
-    static bool Upsert(Entry e)
+    // known: the cursor this PC had synced to before (at start); a plain file in the place of an older NAS version replaced it.
+    static bool Upsert(Entry e, long known = 0)
     {
+        skipped.TryRemove(e.Path, out _); // marked again below if this version can't reach this PC
         var local = SyncRoot.LocalPath(e.Path)!;
         if (!Path.Exists(local))
         {
@@ -261,7 +279,11 @@ static class Remote
                 return true;
             }
             if (cur is not { } p || p.Rev == e.Rev)
+            {
+                if (cur == null && e.Rev > known)
+                    skipped[e.Path] = 0;
                 return false; // shortcut: a same-named new local item is left for the upload direction's conflict copy
+            }
             if (p.Hash == (e.Hash ?? ""))
             {
                 // Same content (moved or touched on the NAS). A local edit keeps its bytes: only the identity moves on.
@@ -275,6 +297,7 @@ static class Remote
             {
                 // Changed on both sides: the upload turns the local edit into a conflict copy.
                 Log.Info($"{e.Path}: changed here and on the NAS; kept the local copy");
+                skipped[e.Path] = 0;
                 return false;
             }
         }

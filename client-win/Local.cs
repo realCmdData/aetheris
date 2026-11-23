@@ -363,7 +363,9 @@ static class Local
         try
         {
             string target = rel;
-            long baseRev = before?.Rev ?? SyncRoot.Replacing(local) ?? 0; // a safe save edits the file it replaces
+            long? swapped = SyncRoot.Replacing(local);
+            long baseRev = before?.Rev ?? swapped ?? 0; // a safe save edits the file it replaces
+            bool plain = before == null && swapped == null; // a plain file: new here, or saved over the placeholder through a temp file
             Entry? theirs = null; // the NAS version, when both sides changed
             int copies = 0;
             bool parents = false;
@@ -382,8 +384,8 @@ static class Local
                         e = there; // this very file is on the NAS already (sent twice, or sent before it could be marked)
                         break;
                     }
-                    if (target == rel && c.Current is { } cur && cur.Hash == before?.Hash)
-                        baseRev = cur.Rev; // only moved or touched on the NAS: still the version we edited
+                    if (target == rel && c.Current is { } cur && (cur.Hash == before?.Hash || (plain && Remote.Had(rel, cur.Rev))))
+                        baseRev = cur.Rev; // only moved or touched on the NAS, or the version this PC had and an app saved over: still the one we edited
                     else if (target == rel && c.Current == null)
                         baseRev = 0; // deleted on the NAS meanwhile: the edit wins and brings it back
                     else
@@ -423,6 +425,7 @@ static class Local
                     SyncRoot.SetIdentity(h, e, same);
             }
             SyncRoot.Replaced(local);
+            Remote.Settled(rel);
             Log.Info($"↑ {target} ({size:N0} bytes{(target != rel ? ", conflict copy" : "")})");
             Ended(size);
             if (target == rel)

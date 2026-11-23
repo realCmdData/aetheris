@@ -8,7 +8,7 @@ Start with the log of the part that misbehaves:
 |---|---|
 | Server | Its standard output: `journalctl -u aetheris` with systemd, `aetheris.log` next to the binary with `scripts/nas/start.sh` |
 | Gateway | Vercel project › **Logs** |
-| Windows app | `%LOCALAPPDATA%\Aetheris\nas\aetheris.log` |
+| Windows app | `%LOCALAPPDATA%\Aetheris\nas\aetheris.log`, or **Export support log…** under Account in the app window: one zip (in `%LOCALAPPDATA%\Aetheris\nas\support`) with the app's state, recent activity, settings and the newest part of the log |
 | Web app | The browser's developer tools (<kbd>F12</kbd>) › **Console** |
 
 ## The server
@@ -108,7 +108,9 @@ says `not synced: it has hard links`.
 
 The file changed on the server and on this PC at the same time, so Aetheris kept both
 ([details](windows-app.md#when-two-pcs-change-the-same-file)). Compare them, keep the one you want and delete the
-other.
+other. Up to version 1.2.2, an app that saves through a temp file renamed over the original (Claude Code, many editors and
+slicers) made such a copy at every save even when only this PC had changed it. In the app window, press an entry under
+Activity to read all of it.
 
 ### Aetheris doesn't appear in Explorer's navigation pane
 
@@ -124,4 +126,5 @@ the window.
 ## Still stuck?
 
 Open an [issue](https://github.com/realCmdData/aetheris/issues) with what you did, what you expected, and the relevant
-log lines. Leave out tokens, keys and your addresses.
+log lines (or the support zip from the Windows app). Leave out tokens, keys and your addresses: the zip has no
+sign-in token, but its log and settings name your files, folders and server.

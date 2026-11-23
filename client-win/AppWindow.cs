@@ -353,6 +353,19 @@ static class AppWindow
                 case "signout":
                     await Engine.SignOut(profile);
                     break;
+                case "support":
+                    try
+                    {
+                        var zip = await Task.Run(() => Support.Export(profile));
+                        Process.Start("explorer.exe", $"/select,\"{zip}\"")?.Dispose(); // the file, ready to attach
+                        Send(new { type = "support", path = zip, error = (string?)null });
+                    }
+                    catch (Exception e) // answered either way, or the button would wait forever
+                    {
+                        Log.Error($"support bundle: {e.Message}");
+                        Send(new { type = "support", path = (string?)null, error = $"Couldn't save the support log: {e.Message}" });
+                    }
+                    break;
             }
         }
         catch (Exception e)

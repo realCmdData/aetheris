@@ -11,6 +11,7 @@
   let freed = $state<number | null>(null)
   let setup = $state(false) // just paired: the setup goes on to the folders step
   let answer = $state<{ error: string | null } | null>(null) // the app's last word on adding or removing a folder
+  let exported = $state<{ path: string | null; error: string | null } | null>(null) // the last support bundle
 
   listen((m) => {
     if (m.type === 'state') app = m
@@ -20,6 +21,7 @@
       if (!m.error) setup = true
     } else if (m.type === 'freed') freed = m.bytes
     else if (m.type === 'folder') answer = { error: m.error }
+    else if (m.type === 'support') exported = { path: m.path, error: m.error }
   })
   send({ type: 'ready' })
 
@@ -38,7 +40,7 @@
     <!-- The new screen materializes (fade with a slight scale) rather than sliding in from nowhere. -->
     <div class="screen" in:scale={{ start: 0.985, duration: 260, opacity: 0 }} out:fade={{ duration: 120 }}>
       {#if screen === 'home'}
-        <Home {app} {freed} onfreed={() => (freed = null)} folderError={answer?.error ?? null} />
+        <Home {app} {freed} onfreed={() => (freed = null)} folderError={answer?.error ?? null} {exported} onexport={() => (exported = null)} />
       {:else if screen === 'folders'}
         <Folders {app} {answer} ondone={() => ((setup = false), (answer = null))} />
       {:else}

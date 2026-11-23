@@ -42,6 +42,8 @@ export type Message =
   | { type: 'paired'; error: string | null }
   | { type: 'freed'; bytes: number }
   | { type: 'folder'; error: string | null }
+  /** A support bundle was written (path) and shown in Explorer, or it failed (error). */
+  | { type: 'support'; path: string | null; error: string | null }
   | { type: 'error'; message: string }
 
 type Listener = (m: Message) => void
@@ -131,6 +133,7 @@ function mock(m: { type: string; [k: string]: unknown }) {
       break
     }
     case 'autoFree': state.autoFree = Number(m.days); break
+    case 'support': emit({ type: 'support', path: 'C:\\Users\\you\\AppData\\Local\\Aetheris\\nas\\support\\aetheris-support-2026-11-23-104512.zip', error: null }); break
     case 'removeFolder':
       state.folders = state.folders.filter((f) => f.path !== m.path)
       emit({ type: 'folder', error: null })
